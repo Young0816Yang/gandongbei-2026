@@ -582,8 +582,70 @@
     background: var(--map-bg);
     border-radius: var(--radius-sm);
     overflow: hidden;
+    position: relative;
   }
-  .day-route-svg svg { width: 100%; height: auto; display: block; }
+  /* 当日路线图:固定宽高比,避免跨城日被拉成超长图 */
+  .day-route-svg .map-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;          /* 横向矩形,适合手机 */
+    overflow: hidden;
+    background: var(--map-bg);
+    touch-action: none;            /* 关键:禁用浏览器默认手势,我们自己接管 */
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .day-route-svg .map-stage > svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }
+  .day-route-svg .map-stage > svg.dragging { cursor: grabbing; }
+  /* 缩放控件:右上角浮动 */
+  .map-zoom-controls {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 2;
+  }
+  .map-zoom-controls button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .map-zoom-controls button:active { background: var(--bg-soft); }
+  .map-zoom-hint {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    z-index: 2;
+    font-size: 11px;
+    color: var(--fg-soft);
+    background: rgba(255,253,244,.85);
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border-soft);
+    pointer-events: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    .map-zoom-hint { background: rgba(36,31,16,.85); }
+  }
   .day-nav-btn {
     display: block;
     width: calc(100% - 32px);
@@ -1506,6 +1568,9 @@ function renderDays() {
         wrap.hidden = false;
         btn.textContent = "收起当日路线";
         wrap.innerHTML = await renderDayRouteSVG(id);
+        // 绑定手势交互(双指缩放/拖动/按钮)
+        const stage = wrap.querySelector('[data-map-stage]');
+        if (stage) initMapInteractions(stage);
       } else {
         wrap.hidden = true;
         btn.textContent = "查看当日路线";
@@ -1601,19 +1666,45 @@ function loadTileCanvas(bounds, z) {
   });
 }
 
-// 计算一个能覆盖所有点的 bounds
-function calcBounds(points, pad = 0.15) {
+// 计算一个能覆盖所有点的 bounds;可选强制纵横比(避免跨城日拉成超长竖条)
+// aspectRatio = null:自然 bounds; = 数字 (canvasW/canvasH):
+//   调整使 lngSpan/latSpan ≈ aspectRatio * cos(midLat) (墨卡托投影补偿)
+function calcBounds(points, pad = 0.15, aspectRatio = null) {
   const lats = points.map(p => p.lat);
   const lngs = points.map(p => p.lng);
-  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
-  const dLat = (maxLat - minLat) * pad || 0.05;
-  const dLng = (maxLng - minLng) * pad || 0.05;
-  return { minLat: minLat - dLat, maxLat: maxLat + dLat, minLng: minLng - dLng, maxLng: maxLng + dLng };
+  let minLat = Math.min(...lats), maxLat = Math.max(...lats);
+  let minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+  if (maxLat === minLat) { maxLat += 0.01; minLat -= 0.01; }
+  if (maxLng === minLng) { maxLng += 0.01; minLng -= 0.01; }
+  let dLat = (maxLat - minLat) * pad || 0.05;
+  let dLng = (maxLng - minLng) * pad || 0.05;
+  minLat -= dLat; maxLat += dLat;
+  minLng -= dLng; maxLng += dLng;
+  if (aspectRatio) {
+    const latSpan = maxLat - minLat;
+    const lngSpan = maxLng - minLng;
+    const midLat = (maxLat + minLat) / 2;
+    const k = Math.cos(midLat * Math.PI / 180); // 墨卡托 cos 补偿
+    // 视觉 canvas w/h = aspectRatio,等价于 lngSpan/latSpan = aspectRatio * k
+    const targetRatio = aspectRatio * k;
+    const currentRatio = lngSpan / latSpan;
+    if (currentRatio < targetRatio) {
+      // lng 太窄:横向扩展 lng
+      const newLngSpan = latSpan * targetRatio;
+      const extra = (newLngSpan - lngSpan) / 2;
+      minLng -= extra; maxLng += extra;
+    } else {
+      // lng 太宽:纵向扩展 lat
+      const newLatSpan = lngSpan / targetRatio;
+      const extra = (newLatSpan - latSpan) / 2;
+      minLat -= extra; maxLat += extra;
+    }
+  }
+  return { minLat, maxLat, minLng, maxLng };
 }
 // 按 bounds 精确选 zoom:遍历 z,计算实际瓦片网格数,取第一个 ≤ maxTiles 的 z
-function pickZoomBySpan(bounds, maxTiles = 36) {
-  for (let z = 15; z >= 4; z--) {
+function pickZoomBySpan(bounds, maxTiles = 36, minZoom = 4) {
+  for (let z = 15; z >= minZoom; z--) {
     const n = Math.pow(2, z);
     const toRad = d => d * Math.PI / 180;
     const x0 = Math.floor((bounds.minLng + 180) / 360 * n);
@@ -1624,7 +1715,7 @@ function pickZoomBySpan(bounds, maxTiles = 36) {
     const tilesH = y1 - y0 + 1;
     if (tilesW * tilesH <= maxTiles) return z;
   }
-  return 6;
+  return minZoom;
 }
 
 /* ============================================================
@@ -1771,9 +1862,9 @@ async function renderDayRouteSVG(dayId) {
   if (stationForDay) pts.push({ name: stationForDay.name, lat: stationForDay.lat, lng: stationForDay.lng, kind: "station" });
   if (pts.length < 1) return '<div style="padding:40px;text-align:center;color:var(--muted);">暂无定位点</div>';
 
-  const W = 800, H = 460;
-  const bounds = calcBounds(pts, 0.25);
-  const z = pickZoomBySpan(bounds, 30); // 按当日跨度动态选 zoom
+  // 计算 bounds:强制纵横比 4:3(避免跨城日拉成超长竖条),提高最小 zoom 让细节清晰
+  const bounds = calcBounds(pts, 0.18, 4 / 3);
+  const z = pickZoomBySpan(bounds, 30, 10);
   const { url, project, canvasW, canvasH } = await loadTileCanvas(bounds, z);
 
   // 路线
@@ -1781,7 +1872,6 @@ async function renderDayRouteSVG(dayId) {
   let lines = '';
   for (let i = 0; i < pathCoords.length - 1; i++) {
     const [ax, ay] = pathCoords[i], [bx, by] = pathCoords[i+1];
-    const mx = (ax + bx) / 2, my = (ay + by) / 2;
     lines += `<path d="M ${ax} ${ay} L ${bx} ${by}" stroke="${d.color}" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.95"/>`;
   }
 
@@ -1803,7 +1893,21 @@ async function renderDayRouteSVG(dayId) {
     return `<g>${shape}<text x="${lx}" y="${ly}" font-size="12" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">${label}</text></g>`;
   }).join('');
 
-  return `<svg viewBox="0 0 ${canvasW} ${canvasH}" preserveAspectRatio="xMidYMid meet"><image href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}"/>${lines}${dots}</svg>`;
+  // 包一层 .map-stage 提供 4:3 固定容器 + 缩放控件 + 手势
+  const svgId = `day-svg-${dayId}`;
+  return `
+    <div class="map-stage" data-map-stage>
+        <svg id="${svgId}" data-day-svg="${dayId}" viewBox="0 0 ${canvasW} ${canvasH}" preserveAspectRatio="xMidYMid meet">
+          <image href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}"/>
+          ${lines}${dots}
+        </svg>
+        <div class="map-zoom-hint">双指缩放 · 拖动平移</div>
+        <div class="map-zoom-controls">
+          <button type="button" data-zoom-act="in" aria-label="放大">+</button>
+          <button type="button" data-zoom-act="out" aria-label="缩小">−</button>
+          <button type="button" data-zoom-act="reset" aria-label="还原" style="font-size:11px;">⟲</button>
+        </div>
+      </div>`;
 }
 
 /* ============================================================
@@ -1909,6 +2013,144 @@ function initTodoCollapse() {
     collapsed = !collapsed;
     localStorage.setItem('trip-todo-collapsed', collapsed ? '1' : '0');
     apply(collapsed);
+  });
+}
+
+/* ============================================================
+ *  每日路线地图:手势交互(双指缩放 / 单指拖动 / 滚轮 / 按钮)
+ *  viewBox-based:精度比 CSS transform 高
+ * ============================================================ */
+function initMapInteractions(stage) {
+  const svg = stage.querySelector('svg[data-day-svg]');
+  if (!svg) return;
+  const initialViewBox = svg.getAttribute('viewBox').split(/\s+/).map(Number);
+  let [vx, vy, vw, vh] = initialViewBox;
+  const MIN_SCALE = 0.25;   // 最大放大 4x(细看)
+  const MAX_SCALE = 1;      // 不允许缩小到比初始还小
+  let pointers = new Map(); // pointerId -> {x,y}
+  let pinchStart = null;     // 双指初始距离 + 初始 viewBox
+  let panStart = null;       // 单指拖动初始状态
+  let lastTap = 0;
+
+  const apply = () => svg.setAttribute('viewBox', `${vx} ${vy} ${vw} ${vh}`);
+
+  const screenToSvg = (clientX, clientY) => {
+    const r = svg.getBoundingClientRect();
+    return {
+      x: vx + ((clientX - r.left) / r.width) * vw,
+      y: vy + ((clientY - r.top) / r.height) * vh,
+    };
+  };
+  const scaleAt = (clientX, clientY, factor) => {
+    // 以(clientX, clientY)为中心缩放 factor 倍(factor<1 放大)
+    const focus = screenToSvg(clientX, clientY);
+    const newW = vw * factor, newH = vh * factor;
+    vx = focus.x - ((clientX - svg.getBoundingClientRect().left) / svg.getBoundingClientRect().width) * newW;
+    vy = focus.y - ((clientY - svg.getBoundingClientRect().top) / svg.getBoundingClientRect().height) * newH;
+    vw = newW; vh = newH;
+    clamp(); apply();
+  };
+  const clamp = () => {
+    if (vw < initialViewBox[2] * MIN_SCALE) {
+      const f = (initialViewBox[2] * MIN_SCALE) / vw;
+      vw *= f; vh *= f;
+      // 中心点不变,直接按比例收缩
+    }
+    if (vw > initialViewBox[2] * MAX_SCALE) {
+      const f = (initialViewBox[2] * MAX_SCALE) / vw;
+      vx += (vw - initialViewBox[2]) / 2;
+      vy += (vh - initialViewBox[3]) / 2;
+      vw *= f; vh *= f;
+    }
+  };
+
+  // 滚轮缩放(PC)
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const factor = e.deltaY > 0 ? 1.15 : 1 / 1.15;
+    scaleAt(e.clientX, e.clientY, factor);
+  }, { passive: false });
+
+  // 触屏
+  stage.addEventListener('pointerdown', (e) => {
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 1) {
+      panStart = { vx, vy, x: e.clientX, y: e.clientY, moved: false };
+    } else if (pointers.size === 2) {
+      const pts = Array.from(pointers.values());
+      pinchStart = {
+        dist: Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y),
+        vw, vh, vx, vy,
+        cx: (pts[0].x + pts[1].x) / 2,
+        cy: (pts[0].y + pts[1].y) / 2,
+      };
+      panStart = null; // 双指时暂停单指拖动
+      svg.classList.add('dragging');
+    }
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener('pointermove', (e) => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 2 && pinchStart) {
+      const pts = Array.from(pointers.values());
+      const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+      const factor = pinchStart.dist / dist; // dist 变小 -> factor>1 放大(vw 变小)
+      // 双指中心点
+      const cx = (pts[0].x + pts[1].x) / 2, cy = (pts[0].y + pts[1].y) / 2;
+      // 在 pinch 起始 viewBox 上应用新比例,以中点为锚
+      const focus = { x: pinchStart.vx + ((cx - svg.getBoundingClientRect().left) / svg.getBoundingClientRect().width) * pinchStart.vw,
+                       y: pinchStart.vy + ((cy - svg.getBoundingClientRect().top) / svg.getBoundingClientRect().height) * pinchStart.vh };
+      const newW = pinchStart.vw * factor, newH = pinchStart.vh * factor;
+      vx = focus.x - ((cx - svg.getBoundingClientRect().left) / svg.getBoundingClientRect().width) * newW;
+      vy = focus.y - ((cy - svg.getBoundingClientRect().top) / svg.getBoundingClientRect().height) * newH;
+      vw = newW; vh = newH;
+      clamp(); apply();
+    } else if (pointers.size === 1 && panStart) {
+      const dx = e.clientX - panStart.x, dy = e.clientY - panStart.y;
+      if (!panStart.moved && Math.hypot(dx, dy) > 4) { panStart.moved = true; svg.classList.add('dragging'); }
+      if (panStart.moved) {
+        const r = svg.getBoundingClientRect();
+        vx = panStart.vx - (dx / r.width) * vw;
+        vy = panStart.vy - (dy / r.height) * vh;
+        apply();
+      }
+    }
+  });
+  const endPointer = (e) => {
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) pinchStart = null;
+    if (pointers.size === 0) {
+      // 双击检测
+      const now = Date.now();
+      if (now - lastTap < 300 && panStart && !panStart.moved) {
+        // 双击切换缩放
+        const cur = vw;
+        if (cur > initialViewBox[2] * 0.6) {
+          scaleAt(e.clientX, e.clientY, 0.5); // 放大
+        } else {
+          vx = initialViewBox[0]; vy = initialViewBox[1]; vw = initialViewBox[2]; vh = initialViewBox[3]; apply(); // 还原
+        }
+      }
+      lastTap = now;
+      panStart = null;
+      setTimeout(() => svg.classList.remove('dragging'), 50);
+    }
+  };
+  stage.addEventListener('pointerup', endPointer);
+  stage.addEventListener('pointercancel', endPointer);
+
+  // 缩放按钮
+  stage.querySelectorAll('[data-zoom-act]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const r = svg.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      const act = btn.dataset.zoomAct;
+      if (act === 'in')  scaleAt(cx, cy, 0.7);
+      else if (act === 'out') scaleAt(cx, cy, 1.3);
+      else { vx = initialViewBox[0]; vy = initialViewBox[1]; vw = initialViewBox[2]; vh = initialViewBox[3]; apply(); }
+    });
   });
 }
 
