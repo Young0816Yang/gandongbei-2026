@@ -245,19 +245,26 @@
     top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    max-width: 340px;
+    max-width: 380px;
     width: auto;
     min-width: 220px;
-    padding: 10px 18px;
+    padding: 10px 16px;
     border-radius: 999px;
     border: 1px solid rgba(255,255,255,.25);
     box-shadow: 0 8px 28px rgba(120,70,0,.28);
     cursor: pointer;
     border-bottom: 1px solid rgba(255,255,255,.25);
+    /* 横向并排:title 和倒计时一起居中 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
   }
   .next-up.is-island::before { display: none; }
   .next-up.is-island .next-up-label,
-  .next-up.is-island .next-up-status {
+  .next-up.is-island .next-up-status,
+  .next-up.is-island .next-up-sub {
     display: none;
   }
   .next-up.is-island .next-up-title {
@@ -267,12 +274,13 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  .next-up.is-island .next-up-sub {
-    display: none;
+    text-align: center;
+    flex-shrink: 1;
+    min-width: 0;
   }
   .next-up.is-island .countdown {
     gap: 2px;
+    flex-shrink: 0;
   }
   .next-up.is-island .cd-block {
     flex-direction: row;
@@ -1793,7 +1801,7 @@ async function renderOverviewSVG() {
   const z = pickZoomBySpan(bounds, 42); // 总览:控制瓦片数量
   const { url, project, canvasW, canvasH } = await loadTileCanvas(bounds, z);
 
-  // 路线(仅画选中天)
+  // 路线(仅画选中天):白色外边阴影 + 主色,虚线表达"行程计划"
   const lines = TRIP.days.filter(d => overviewState.has(d.id)).map(d => {
     const seq = ROUTE_SEQ[d.id].path;
     const segs = [];
@@ -1804,20 +1812,23 @@ async function renderOverviewSVG() {
       const [bx, by] = project(b.lng, b.lat);
       const mx = (ax + bx) / 2 + (ay - by) * 0.05;
       const my = (ay + by) / 2 + (bx - ax) * 0.05;
-      segs.push(`<path d="M ${ax} ${ay} Q ${mx} ${my} ${bx} ${by}" stroke="${d.color}" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.95" stroke-dasharray="6 4"/>`);
+      // 白色外边阴影
+      segs.push(`<path d="M ${ax} ${ay} Q ${mx} ${my} ${bx} ${by}" stroke="#ffffff" stroke-width="9" fill="none" stroke-linecap="round" opacity="0.85"/>`);
+      // 主色虚线
+      segs.push(`<path d="M ${ax} ${ay} Q ${mx} ${my} ${bx} ${by}" stroke="${d.color}" stroke-width="5" fill="none" stroke-linecap="round" opacity="1" stroke-dasharray="6 4"/>`);
     }
     return segs.join('');
   }).join('');
 
-  // 节点
+  // 节点:加大、加粗描边,文字加白色描边阴影
   const cityKeys = new Set(["hz","sr","wy","jdz"]);
   const dots = pts.filter(p => p.key).map(p => {
     const [x, y] = project(p.lng, p.lat);
     const isCity = cityKeys.has(p.key);
     if (isCity) {
-      return `<g><circle cx="${x}" cy="${y}" r="14" fill="var(--accent)" opacity="0.95" stroke="#fff" stroke-width="3"/><circle cx="${x}" cy="${y}" r="6" fill="#fff"/><text x="${x}" y="${y+30}" text-anchor="middle" font-size="16" font-weight="600" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">${p.name}</text></g>`;
+      return `<g><circle cx="${x}" cy="${y}" r="16" fill="var(--accent)" opacity="0.95" stroke="#fff" stroke-width="4"/><circle cx="${x}" cy="${y}" r="7" fill="#fff"/><text x="${x}" y="${y+34}" text-anchor="middle" font-size="17" font-weight="700" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="4" stroke-linejoin="round">${p.name}</text></g>`;
     }
-    return `<g><circle cx="${x}" cy="${y}" r="8" fill="${dayColorOfStop(p.key)}" stroke="#fff" stroke-width="2.5"/><text x="${x+12}" y="${y+4}" font-size="13" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">${p.name}</text></g>`;
+    return `<g><circle cx="${x}" cy="${y}" r="9" fill="${dayColorOfStop(p.key)}" stroke="#fff" stroke-width="3"/><text x="${x+13}" y="${y+5}" font-size="14" font-weight="600" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="4" stroke-linejoin="round">${p.name}</text></g>`;
   }).join('');
 
   // 预留酒店/车站
@@ -1825,13 +1836,13 @@ async function renderOverviewSVG() {
     const [x, y] = project(p.lng, p.lat);
     const isHotel = p.kind === 'hotel';
     const shape = isHotel
-      ? `<rect x="${x-8}" y="${y-8}" width="16" height="16" rx="3" fill="var(--warn)" stroke="#fff" stroke-width="2.5"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">住</text>`
-      : `<circle cx="${x}" cy="${y}" r="9" fill="var(--accent)" stroke="#fff" stroke-width="2.5"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">车</text>`;
-    return `<g>${shape}<text x="${x}" y="${y-14}" text-anchor="middle" font-size="11" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="3">${p.name}</text></g>`;
+      ? `<rect x="${x-9}" y="${y-9}" width="18" height="18" rx="3" fill="var(--warn)" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">住</text>`
+      : `<circle cx="${x}" cy="${y}" r="10" fill="var(--accent)" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">车</text>`;
+    return `<g>${shape}<text x="${x}" y="${y-14}" text-anchor="middle" font-size="12" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="4">${p.name}</text></g>`;
   }).join('');
 
-  // 底图用 <image> 引用一次性合成的 canvas PNG(绝对无缝)
-  $("#overviewSvg").innerHTML = `<svg viewBox="0 0 ${canvasW} ${canvasH}" preserveAspectRatio="xMidYMid meet"><image href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}"/>${lines}${dots}${extraDots}</svg>`;
+  // 底图降透明度 + 降饱和,作为背景而不是主角
+  $("#overviewSvg").innerHTML = `<svg viewBox="0 0 ${canvasW} ${canvasH}" preserveAspectRatio="xMidYMid meet"><image href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}" opacity="0.5" style="filter:saturate(0.55) brightness(1.05);"/>${lines}${dots}${extraDots}</svg>`;
 
   $("#overviewLegend").innerHTML = TRIP.days.map(d => {
     const on = overviewState.has(d.id);
@@ -1867,30 +1878,84 @@ async function renderDayRouteSVG(dayId) {
   const z = pickZoomBySpan(bounds, 30, 10);
   const { url, project, canvasW, canvasH } = await loadTileCanvas(bounds, z);
 
-  // 路线
+  // 路线:加白色描边阴影 + 主色更粗,让路线在底图上更突出
   const pathCoords = pts.map(p => project(p.lng, p.lat));
   let lines = '';
   for (let i = 0; i < pathCoords.length - 1; i++) {
     const [ax, ay] = pathCoords[i], [bx, by] = pathCoords[i+1];
-    lines += `<path d="M ${ax} ${ay} L ${bx} ${by}" stroke="${d.color}" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.95"/>`;
+    // 外白边 + 内主色双层描边,形成路线"发光"效果
+    lines += `<path d="M ${ax} ${ay} L ${bx} ${by}" stroke="#ffffff" stroke-width="11" fill="none" stroke-linecap="round" opacity="0.85"/>`;
+    lines += `<path d="M ${ax} ${ay} L ${bx} ${by}" stroke="${d.color}" stroke-width="6" fill="none" stroke-linecap="round" opacity="1"/>`;
   }
 
-  // 节点
+  // 节点:加大圆圈 + 加粗描边,编号圈根据上下左右错位避免重叠
+  // 计算每个点的锚点方向(自动选右/左/上/下,让标注远离路线)
+  // ===== 防重叠标注布局 =====
+  // 依赖坐标相近的点聚集判定(同地点多个时段,或景点紧邻),
+  // 给同一簇内的点分配不同展开方向 + 递增偏移半径,螺旋展开避免文字叠加
+  const clusterDist = 95; // 坐标间距小于该值(px)视为同簇
+  const clusters = [];    // 每项 { pts:[索引...], rect }
+  const clusterOf = new Array(pts.length).fill(-1);
+  pts.forEach((p, i) => {
+    if (clusterOf[i] >= 0) return;
+    const [cx, cy] = project(p.lng, p.lat);
+    const members = [i];
+    for (let j = i + 1; j < pts.length; j++) {
+      if (clusterOf[j] >= 0) continue;
+      const [px, py] = project(pts[j].lng, pts[j].lat);
+      if (Math.hypot(px - cx, py - cy) < clusterDist) members.push(j);
+    }
+    const cid = clusters.length;
+    members.forEach(m => clusterOf[m] = cid);
+    clusters.push(members);
+  });
+
+  // 为簇内每个成员分配一个展开方向(0右 1上 2左 3下,循环)+ 偏移环数
+  const dirAngles = [0, -90, 180, 90];   // 度(0=右侧,逆时针)
+  const RING_STEP = 30;                  // 每环增加偏移(px)
+  function labelPlacement(i) {
+    const [x, y] = project(pts[i].lng, pts[i].lat);
+    const cid = clusterOf[i];
+    const members = clusters[cid];
+    const ord = members.indexOf(i);      // 簇内第几个
+    const angle = dirAngles[ord % 4] * Math.PI / 180;
+    const ring = Math.floor(ord / 4);    // 第几环(0,1,2...)
+    const R = 14;
+    // 基础偏移往外推,带动文字远离中心
+    const anchorDist = R + 10 + ring * RING_STEP;
+    const dx = Math.cos(angle) * anchorDist;
+    const dy = Math.sin(angle) * anchorDist;
+    let lx = x + dx, ly = y + dy;
+    let anchor = 'middle';
+    if (angle > -Math.PI/4 && angle < Math.PI/4) anchor = 'start';          // 右侧
+    else if (angle > Math.PI*3/4 || angle < -Math.PI*3/4) anchor = 'end';   // 左侧
+    else anchor = 'middle';                                                   // 上/下
+    // 文字基线微调(上边需抬高,文字底边对齐)
+    if (Math.abs(Math.sin(angle)) > 0.7) ly = y + dy * 0.6; // 上/下:文字更靠近点
+    return { x, y, lx, ly, anchor };
+  }
+
   const dots = pts.map((p, i) => {
     const [x, y] = project(p.lng, p.lat);
-    let shape, label;
+    const place = labelPlacement(i);
+    let shape;
+    const R = 14;
+    const STROKE = 4;
     if (p.kind === "hotel") {
-      shape = `<rect x="${x-10}" y="${y-10}" width="20" height="20" rx="3" fill="var(--warn)" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">住</text>`;
-      label = p.name;
+      shape = `<rect x="${x-R}" y="${y-R}" width="${R*2}" height="${R*2}" rx="4" fill="var(--warn)" stroke="#fff" stroke-width="${STROKE}"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">住</text>`;
     } else if (p.kind === "station") {
-      shape = `<circle cx="${x}" cy="${y}" r="11" fill="var(--accent)" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">车</text>`;
-      label = p.name;
+      shape = `<circle cx="${x}" cy="${y}" r="${R}" fill="var(--accent)" stroke="#fff" stroke-width="${STROKE}"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">车</text>`;
     } else {
-      shape = `<circle cx="${x}" cy="${y}" r="11" fill="${d.color}" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">${i+1}</text>`;
-      label = p.name;
+      shape = `<circle cx="${x}" cy="${y}" r="${R}" fill="${d.color}" stroke="#fff" stroke-width="${STROKE}"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">${i+1}</text>`;
     }
-    const lx = x + 16, ly = y - 6;
-    return `<g>${shape}<text x="${lx}" y="${ly}" font-size="12" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">${label}</text></g>`;
+    // 文字底板:白底 + 彩色描边,字号加大 14,宽随字数
+    const txtW = Math.max(42, p.name.length * 9 + 16);
+    const ly2 = place.anchor === 'middle' ? place.ly + 5 : place.ly;
+    const lx2 = place.anchor === 'middle' ? place.lx : (place.anchor === 'start' ? place.lx : place.lx);
+    const rectX = place.anchor === 'start' ? lx2 - 4 : (place.anchor === 'end' ? lx2 - txtW + 4 : lx2 - txtW/2);
+    const rectY = ly2 - 13;
+    const labelHtml = `<g><rect x="${rectX}" y="${rectY}" width="${txtW}" height="20" rx="5" fill="#ffffff" opacity="0.94" stroke="${d.color}" stroke-width="2"/><text x="${lx2}" y="${ly2}" font-size="14" font-weight="600" fill="var(--fg)" text-anchor="${place.anchor}">${p.name}</text></g>`;
+    return `<g>${shape}${labelHtml}</g>`;
   }).join('');
 
   // 包一层 .map-stage 提供 4:3 固定容器 + 缩放控件 + 手势
@@ -1898,7 +1963,8 @@ async function renderDayRouteSVG(dayId) {
   return `
     <div class="map-stage" data-map-stage>
         <svg id="${svgId}" data-day-svg="${dayId}" viewBox="0 0 ${canvasW} ${canvasH}" preserveAspectRatio="xMidYMid meet">
-          <image href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}"/>
+          <!-- 底图降透明度 + 降饱和,作为背景而不是主角 -->
+          <image href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}" opacity="0.5" style="filter:saturate(0.55) brightness(1.05);"/>
           ${lines}${dots}
         </svg>
         <div class="map-zoom-hint">双指缩放 · 拖动平移</div>
