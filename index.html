@@ -349,11 +349,10 @@
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    aspect-ratio: 4/5;
     width: 100%;
     position: relative;
   }
-  .overview-svg svg { width: 100%; height: 100%; display: block; }
+  .overview-svg svg { width: 100%; height: auto; display: block; }
   .overview-days {
     display: flex;
     flex-wrap: wrap;
@@ -405,6 +404,64 @@
   }
 
   /* ===== 预订卡片 ===== */
+  .booking-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    background: var(--bg-soft);
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  .booking-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+    font-size: 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--fg-soft);
+    background: transparent;
+    border: none;
+    transition: all .15s ease;
+    font-weight: 500;
+  }
+  .booking-tab.active {
+    background: var(--card);
+    color: var(--fg);
+    box-shadow: var(--shadow);
+  }
+  .booking-tab .count {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 11px;
+    opacity: .6;
+  }
+  .booking-empty {
+    background: var(--card);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .todo-toggle {
+    margin-left: auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--fg-soft);
+    border-radius: 999px;
+    font-size: 11px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .todo-toggle:active { transform: scale(.96); }
+  #todoSection.is-collapsed #todo { display: none; }
+  #todoSection.is-collapsed .todo-toggle::before { content: "展开"; }
+  #todoSection:not(.is-collapsed) .todo-toggle::before { content: "收起"; }
   .booking-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -525,9 +582,8 @@
     background: var(--map-bg);
     border-radius: var(--radius-sm);
     overflow: hidden;
-    aspect-ratio: 16/7;
   }
-  .day-route-svg svg { width: 100%; height: 100%; display: block; }
+  .day-route-svg svg { width: 100%; height: auto; display: block; }
   .day-nav-btn {
     display: block;
     width: calc(100% - 32px);
@@ -746,9 +802,19 @@
     <div class="overview-legend" id="overviewLegend" data-page-node-id="9kwwMfnM1SyTTHekpUgTuf"></div>
   </section>
 
-  <!-- 已确认的预订 -->
+  <!-- 出发前待办(可隐藏) -->
+  <section data-page-node-id="D1MDJ8Xuo4XerBSm5bf5zJ" id="todoSection">
+    <h2 data-page-node-id="bxhf4C0oYIRtuVH5A4WITP" style="display:flex;align-items:center;gap:10px;">
+      <span>出发前待办</span>
+      <button class="todo-toggle" id="todoToggle" type="button" aria-label="展开/收起待办"></button>
+    </h2>
+    <ul class="plain-list" id="todo" data-page-node-id="nvNLOzMYV4KRaaTK4uAftG"></ul>
+  </section>
+
+  <!-- 已确认的预订(分类 tab) -->
   <section data-page-node-id="ARQMPS4irGFF7WIEm4mOFh">
     <h2 data-page-node-id="py4770XKFmt5tQMSvPL4Cf">已确认的预订</h2>
+    <div class="booking-tabs" id="bookingTabs" data-page-node-id="ARQMPS4irGFF7WIEm4mOFg"></div>
     <div id="bookings" data-page-node-id="94pG3MLC24CASHQbmC6sAu"></div>
   </section>
 
@@ -756,12 +822,6 @@
   <section data-page-node-id="BUzfPlXxNGLbNSgSN2XxTX">
     <h2 data-page-node-id="jS8CuzDB4TD729WDEBAIyE">逐日行程</h2>
     <div id="days" data-page-node-id="iTPacTQcLDZxIKI3yvFntM"></div>
-  </section>
-
-  <!-- 待办清单 -->
-  <section data-page-node-id="D1MDJ8Xuo4XerBSm5bf5zJ">
-    <h2 data-page-node-id="bxhf4C0oYIRtuVH5A4WITP">出发前待办</h2>
-    <ul class="plain-list" id="todo" data-page-node-id="nvNLOzMYV4KRaaTK4uAftG"></ul>
   </section>
 
   <!-- 实用贴士 -->
@@ -1136,51 +1196,51 @@ const TRIP = {
     }
   ],
   bookings: [
-    { tag: "高铁", pending: true, title: "杭州西 → 上饶", rows: [
+    { kind: "train", tag: "高铁", pending: true, title: "杭州西 → 上饶", rows: [
       { lbl: "日期", val: "2026-10-01" },
       { lbl: "时段", val: "10:30 – 12:30(占位,以出票为准)" },
       { lbl: "车次", val: "9.16 抢票后填入" },
       { lbl: "兜底", val: "跨城专车(滴滴小程序『跨城专车』)" }
     ]},
-    { tag: "高铁", pending: true, title: "上饶 → 婺源", rows: [
+    { kind: "train", tag: "高铁", pending: true, title: "上饶 → 婺源", rows: [
       { lbl: "日期", val: "2026-10-03" },
       { lbl: "时段", val: "11:30 – 12:30(占位)" },
       { lbl: "车次", val: "9.18 抢票后填入" }
     ]},
-    { tag: "高铁", pending: true, title: "婺源 → 景德镇北", rows: [
+    { kind: "train", tag: "高铁", pending: true, title: "婺源 → 景德镇北", rows: [
       { lbl: "日期", val: "2026-10-04" },
       { lbl: "时段", val: "11:30 – 12:00(占位)" },
       { lbl: "车次", val: "9.19 抢票后填入" }
     ]},
-    { tag: "高铁", pending: true, title: "景德镇北 → 杭州西", rows: [
+    { kind: "train", tag: "高铁", pending: true, title: "景德镇北 → 杭州西", rows: [
       { lbl: "日期", val: "2026-10-05" },
       { lbl: "时段", val: "15:00 – 17:00(占位)" },
       { lbl: "车次", val: "9.20 抢票后填入" }
     ]},
-    { tag: "住宿", pending: true, title: "D1 葛仙山镇民宿(独卫 2 间)", rows: [
+    { kind: "hotel", tag: "住宿", pending: true, title: "D1 葛仙山镇民宿(独卫 2 间)", rows: [
       { lbl: "入住", val: "2026-10-01" },
       { lbl: "退房", val: "2026-10-02 上午" },
       { lbl: "需求", val: "和民宿文字确认: 接送 / 夜间加价 / 4 人全部接送" }
     ]},
-    { tag: "住宿", pending: true, title: "D2 上饶市区酒店(独卫 2 间)", rows: [
+    { kind: "hotel", tag: "住宿", pending: true, title: "D2 上饶市区酒店(独卫 2 间)", rows: [
       { lbl: "入住", val: "2026-10-02" },
       { lbl: "退房", val: "2026-10-03 上午" }
     ]},
-    { tag: "住宿", pending: true, title: "D3 婺源县城民宿(独卫 2 间)", rows: [
+    { kind: "hotel", tag: "住宿", pending: true, title: "D3 婺源县城民宿(独卫 2 间)", rows: [
       { lbl: "入住", val: "2026-10-03" },
       { lbl: "退房", val: "2026-10-04 上午" },
       { lbl: "需求", val: "确认篁岭+婺女洲当晚接送时段" }
     ]},
-    { tag: "住宿", pending: true, title: "D4 景德镇市区酒店(独卫 2 间)", rows: [
+    { kind: "hotel", tag: "住宿", pending: true, title: "D4 景德镇市区酒店(独卫 2 间)", rows: [
       { lbl: "入住", val: "2026-10-04" },
       { lbl: "退房", val: "2026-10-05 下午" }
     ]},
-    { tag: "门票", pending: true, title: "中国陶瓷博物馆(免费·必预约)", rows: [
+    { kind: "ticket", tag: "门票", pending: true, title: "中国陶瓷博物馆(免费·必预约)", rows: [
       { lbl: "日期", val: "2026-10-04 下午" },
       { lbl: "入口", val: "小程序『中国陶瓷博物馆』" },
       { lbl: "窗口", val: "提前 7 天开放预约,9.27 抢 13:30 场" }
     ]},
-    { tag: "门票", pending: true, title: "葛仙村 / 篁岭(含索道)/ 婺女洲 / 铜钹山 / 陶阳里", rows: [
+    { kind: "ticket", tag: "门票", pending: true, title: "葛仙村 / 篁岭(含索道)/ 婺女洲 / 铜钹山 / 陶阳里", rows: [
       { lbl: "备注", val: "国庆常限流,建议提前线上购票" }
     ]}
   ],
@@ -1342,11 +1402,38 @@ function mapLinksMulti(points) {
 }
 
 /* ============================================================
- *  渲染:已确认预订
+ *  渲染:已确认预订(分类 tab)
  * ============================================================ */
+const BOOKING_TABS = [
+  { key: "train",  label: "高铁" },
+  { key: "hotel",  label: "住宿" },
+  { key: "ticket", label: "门票" }
+];
+let activeBookingTab = "train";
+
 function renderBookings() {
+  // 渲染 tab
+  const tabsHost = $("#bookingTabs");
+  tabsHost.innerHTML = BOOKING_TABS.map(t => {
+    const n = TRIP.bookings.filter(b => b.kind === t.key).length;
+    const active = t.key === activeBookingTab;
+    return `<button class="booking-tab ${active?'active':''}" data-tab="${t.key}" type="button">${t.label}<span class="count">${n}</span></button>`;
+  }).join('');
+  $$('.booking-tab', tabsHost).forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeBookingTab = btn.dataset.tab;
+      renderBookings();
+    });
+  });
+
+  // 渲染当前 tab 的卡片
   const host = $("#bookings");
-  host.innerHTML = TRIP.bookings.map(b => `
+  const list = TRIP.bookings.filter(b => b.kind === activeBookingTab);
+  if (list.length === 0) {
+    host.innerHTML = `<div class="booking-empty">暂无${BOOKING_TABS.find(t=>t.key===activeBookingTab).label}信息</div>`;
+    return;
+  }
+  host.innerHTML = list.map(b => `
     <div class="booking-card">
       <div class="booking-card-head">
         <span class="booking-tag ${b.pending?'pending':''}">${b.pending?'待出票':'已确认'}</span>
@@ -1409,15 +1496,16 @@ function renderDays() {
     </details>`;
   }).join('');
 
-  // 当日路线展开
+  // 当日路线展开(async 加载真地图)
   $$('[data-route-toggle]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const id = btn.dataset.routeToggle;
       const wrap = $(`[data-route-svg="${id}"]`);
       if (wrap.hidden) {
-        wrap.innerHTML = renderDayRouteSVG(id);
+        wrap.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);">加载地图…</div>';
         wrap.hidden = false;
         btn.textContent = "收起当日路线";
+        wrap.innerHTML = await renderDayRouteSVG(id);
       } else {
         wrap.hidden = true;
         btn.textContent = "查看当日路线";
@@ -1450,7 +1538,97 @@ function renderDays() {
 }
 
 /* ============================================================
- *  渲染:总览地图(地图底 + 按天切换/多选路线)
+ *  真地图:高德瓦片底图 + 经纬度精确投影
+ *  瓦片:https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}
+ *  style=8 = 矢量+标注; 0/1/2/3/4/5/6/7 是不同主题
+ * ============================================================ */
+const TILE_SERVERS = ['1','2','3','4']; // 高德瓦片子域(webrd01~webrd04)
+function tileUrl(s, x, y, z) {
+  return `https://webrd0${s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x=${x}&y=${y}&z=${z}`;
+}
+function lngLatToTileXY(lng, lat, z) {
+  const n = Math.pow(2, z);
+  const xTile = (lng + 180) / 360 * n;
+  const latRad = lat * Math.PI / 180;
+  const yTile = (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * n;
+  return [xTile, yTile];
+}
+// Canvas 方案:把瓦片绘制到 canvas,绝对无缝、不失真
+function loadTileCanvas(bounds, z) {
+  return new Promise((resolve) => {
+    const [xMinT, yMinT] = lngLatToTileXY(bounds.minLng, bounds.maxLat, z);
+    const [xMaxT, yMaxT] = lngLatToTileXY(bounds.maxLng, bounds.minLat, z);
+    const x0 = Math.floor(xMinT), x1 = Math.max(Math.floor(xMaxT), x0 + 1);
+    const y0 = Math.floor(yMinT), y1 = Math.max(Math.floor(yMaxT), y0 + 1);
+    const tilesW = x1 - x0 + 1, tilesH = y1 - y0 + 1;
+    const canvas = document.createElement('canvas');
+    canvas.width = tilesW * 256;
+    canvas.height = tilesH * 256;
+    const ctx = canvas.getContext('2d');
+    const project = (lng, lat) => {
+      const [xt, yt] = lngLatToTileXY(lng, lat, z);
+      return [(xt - x0) * 256, (yt - y0) * 256];
+    };
+    let loaded = 0;
+    const total = tilesW * tilesH;
+    let itemIdx = 0;
+    for (let tx = x0; tx <= x1; tx++) {
+      for (let ty = y0; ty <= y1; ty++) {
+        const s = TILE_SERVERS[itemIdx % TILE_SERVERS.length]; itemIdx++;
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          ctx.drawImage(img, (tx - x0) * 256, (ty - y0) * 256, 256, 256);
+          loaded++;
+          if (loaded >= total) {
+            resolve({ url: canvas.toDataURL('image/png'), project, canvasW: canvas.width, canvasH: canvas.height });
+          }
+        };
+        img.onerror = () => {
+          loaded++;
+          // 失败瓦片保持透明,由底色承接
+          if (loaded >= total) {
+            resolve({ url: canvas.toDataURL('image/png'), project, canvasW: canvas.width, canvasH: canvas.height });
+          }
+        };
+        img.src = tileUrl(s, tx, ty, z);
+      }
+    }
+    // 兜底:万一所有瓦片都失败,也返回 canvas
+    setTimeout(() => {
+      resolve({ url: canvas.toDataURL('image/png'), project, canvasW: canvas.width, canvasH: canvas.height });
+    }, 4000);
+  });
+}
+
+// 计算一个能覆盖所有点的 bounds
+function calcBounds(points, pad = 0.15) {
+  const lats = points.map(p => p.lat);
+  const lngs = points.map(p => p.lng);
+  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+  const dLat = (maxLat - minLat) * pad || 0.05;
+  const dLng = (maxLng - minLng) * pad || 0.05;
+  return { minLat: minLat - dLat, maxLat: maxLat + dLat, minLng: minLng - dLng, maxLng: maxLng + dLng };
+}
+// 按 bounds 精确选 zoom:遍历 z,计算实际瓦片网格数,取第一个 ≤ maxTiles 的 z
+function pickZoomBySpan(bounds, maxTiles = 36) {
+  for (let z = 15; z >= 4; z--) {
+    const n = Math.pow(2, z);
+    const toRad = d => d * Math.PI / 180;
+    const x0 = Math.floor((bounds.minLng + 180) / 360 * n);
+    const x1 = Math.floor((bounds.maxLng + 180) / 360 * n);
+    const y0 = Math.floor((1 - Math.log(Math.tan(toRad(bounds.maxLat)) + 1/Math.cos(toRad(bounds.maxLat))) / Math.PI) / 2 * n);
+    const y1 = Math.floor((1 - Math.log(Math.tan(toRad(bounds.minLat)) + 1/Math.cos(toRad(bounds.minLat))) / Math.PI) / 2 * n);
+    const tilesW = x1 - x0 + 1;
+    const tilesH = y1 - y0 + 1;
+    if (tilesW * tilesH <= maxTiles) return z;
+  }
+  return 6;
+}
+
+/* ============================================================
+ *  渲染:总览地图(高德真地图 + 按天切换/多选路线)
  *  已预留酒店/车站坐标:后续订好后,往 EXTRA_POINTS 里填即可
  * ============================================================ */
 const PLACES = {
@@ -1466,9 +1644,9 @@ const PLACES = {
 };
 
 // 预留:酒店/车站订好后,把坐标填这里,地图会自动显示
+// 格式: { name, lat, lng, kind: "hotel" | "station", day: "d1" }
 const EXTRA_POINTS = [
-  // 示例格式: { name: "葛仙山镇民宿", lat: 28.13, lng: 117.68, kind: "hotel", day: "d1" }
-  // { name: "上饶站", lat: 28.4912, lng: 117.9522, kind: "station", day: "d1" }
+  // { name: "葛仙山镇民宿", lat: 28.13, lng: 117.68, kind: "hotel", day: "d1" },
 ];
 
 const ROUTE_SEQ = {
@@ -1479,25 +1657,12 @@ const ROUTE_SEQ = {
   d5: { path: ["jdz","jdz","hz"] }
 };
 
-// 手绘感轮廓:江西 + 浙赣交界(示意边界,非精确)
-const OUTLINE = "M100,140 C180,100 320,95 430,120 C470,130 500,160 520,210 C540,270 510,340 430,390 C360,430 250,440 160,400 C90,360 60,250 100,140 Z";
-
-function project(lat, lng, w, h) {
-  const minLng = 116.6, maxLng = 120.8;
-  const minLat = 27.7, maxLat = 30.7;
-  const padX = 40, padY = 30;
-  const x = padX + ((lng - minLng) / (maxLng - minLng)) * (w - padX * 2);
-  const y = h - padY - ((lat - minLat) / (maxLat - minLat)) * (h - padY * 2);
-  return [x, y];
-}
-
 let overviewState = new Set(TRIP.days.map(d => d.id)); // 默认全选
 
 function renderOverviewDays() {
   const host = $("#overviewDays");
   const chips = TRIP.days.map(d => {
     const active = overviewState.has(d.id);
-    const bg = active ? d.color : 'transparent';
     return `<button class="day-chip ${active?'active':''}" data-day-chip="${d.id}" style="${active?`background:${d.color};border-color:${d.color};`:''}">${d.label}</button>`;
   }).join('');
   host.innerHTML = chips + `<span class="day-chip hint">点选天 / 可多选</span>`;
@@ -1516,77 +1681,66 @@ function renderOverviewDays() {
   });
 }
 
-function renderOverviewSVG() {
+async function renderOverviewSVG() {
   const W = 800, H = 1000;
-  const stops = [
-    { key: "hz",  label: "杭州西" },
-    { key: "sr",  label: "上饶" },
-    { key: "wy",  label: "婺源" },
-    { key: "jdz", label: "景德镇" },
-    { key: "gxs", label: "葛仙山" },
-    { key: "tbs", label: "铜钹山" },
-    { key: "hl",  label: "篁岭" },
-    { key: "wnz", label: "婺女洲" },
-    { key: "taog",label: "陶溪川" }
-  ];
-  const points = {};
-  stops.forEach(s => {
-    const p = PLACES[s.key];
-    const [x, y] = project(p.lat, p.lng, W, H);
-    points[s.key] = { x, y, label: s.label, name: p.name, kind: p.kind };
+  // 计算 bounds:包含所有 TRIP 城市 + 当前选中天涉及的景点 + 预留点
+  const involvedKeys = new Set();
+  TRIP.days.filter(d => overviewState.has(d.id)).forEach(d => {
+    ROUTE_SEQ[d.id].path.forEach(k => involvedKeys.add(k));
   });
-
-  // 地图底:陆地轮廓 + 水系示意
-  const land = `
-    <rect x="0" y="0" width="${W}" height="${H}" fill="var(--map-bg)"/>
-    <path d="${OUTLINE}" fill="var(--map-land)" stroke="var(--map-line)" stroke-width="2"/>
-    <path d="M180,230 C260,240 300,300 280,360 C260,410 200,420 160,380 C130,340 140,270 180,230 Z" fill="var(--map-bg)" stroke="var(--map-line)" stroke-width="1" opacity="0.7"/>
-    <path d="M430,120 C500,150 540,220 520,300 C505,360 460,390 420,380 C380,370 370,320 390,270 C410,220 400,160 430,120 Z" fill="var(--map-bg)" stroke="var(--map-line)" stroke-width="1" opacity="0.7"/>
-    <text x="${W-20}" y="${H-16}" text-anchor="end" font-size="13" fill="var(--muted)">赣东北 · 浙赣交界(示意底图)</text>
-  `;
+  const pts = [];
+  involvedKeys.forEach(k => {
+    const p = PLACES[k];
+    if (p) pts.push({ name: p.name, lat: p.lat, lng: p.lng, key: k });
+  });
+  EXTRA_POINTS.forEach(p => pts.push(p));
+  if (pts.length === 0) {
+    $("#overviewSvg").innerHTML = `<div style="padding:60px;text-align:center;color:var(--muted);">至少选一天</div>`;
+    return;
+  }
+  const bounds = calcBounds(pts, 0.15);
+  const z = pickZoomBySpan(bounds, 42); // 总览:控制瓦片数量
+  const { url, project, canvasW, canvasH } = await loadTileCanvas(bounds, z);
 
   // 路线(仅画选中天)
   const lines = TRIP.days.filter(d => overviewState.has(d.id)).map(d => {
     const seq = ROUTE_SEQ[d.id].path;
     const segs = [];
     for (let i = 0; i < seq.length - 1; i++) {
-      const a = points[seq[i]], b = points[seq[i+1]];
+      const a = PLACES[seq[i]], b = PLACES[seq[i+1]];
       if (!a || !b) continue;
-      const mx = (a.x + b.x) / 2 + (Math.random() - 0.5) * 8;
-      const my = (a.y + b.y) / 2 + (Math.random() - 0.5) * 8;
-      segs.push(`<path d="M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}" stroke="${d.color}" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.95"/>`);
+      const [ax, ay] = project(a.lng, a.lat);
+      const [bx, by] = project(b.lng, b.lat);
+      const mx = (ax + bx) / 2 + (ay - by) * 0.05;
+      const my = (ay + by) / 2 + (bx - ax) * 0.05;
+      segs.push(`<path d="M ${ax} ${ay} Q ${mx} ${my} ${bx} ${by}" stroke="${d.color}" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.95" stroke-dasharray="6 4"/>`);
     }
     return segs.join('');
   }).join('');
 
-  // 节点(只画选中天涉及的)
-  const involvedKeys = new Set();
-  TRIP.days.filter(d => overviewState.has(d.id)).forEach(d => {
-    ROUTE_SEQ[d.id].path.forEach(k => involvedKeys.add(k));
-  });
-  const activeStops = stops.filter(s => involvedKeys.has(s.key));
-
-  const dots = activeStops.map(s => {
-    const p = points[s.key];
-    const isCity = s.key === "sr" || s.key === "wy" || s.key === "jdz" || s.key === "hz";
+  // 节点
+  const cityKeys = new Set(["hz","sr","wy","jdz"]);
+  const dots = pts.filter(p => p.key).map(p => {
+    const [x, y] = project(p.lng, p.lat);
+    const isCity = cityKeys.has(p.key);
     if (isCity) {
-      return `<g><circle cx="${p.x}" cy="${p.y}" r="13" fill="var(--accent)" opacity="0.95"/><circle cx="${p.x}" cy="${p.y}" r="6" fill="var(--accent-fg)"/><text x="${p.x}" y="${p.y+28}" text-anchor="middle" font-size="16" font-weight="600" fill="var(--fg)">${p.label}</text></g>`;
+      return `<g><circle cx="${x}" cy="${y}" r="14" fill="var(--accent)" opacity="0.95" stroke="#fff" stroke-width="3"/><circle cx="${x}" cy="${y}" r="6" fill="#fff"/><text x="${x}" y="${y+30}" text-anchor="middle" font-size="16" font-weight="600" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">${p.name}</text></g>`;
     }
-    // 景点:带小标签
-    return `<g><circle cx="${p.x}" cy="${p.y}" r="7" fill="${dayColorOfStop(s.key)}" stroke="var(--bg)" stroke-width="2"/><text x="${p.x+12}" y="${p.y+4}" font-size="13" fill="var(--fg-soft)">${p.label}</text></g>`;
+    return `<g><circle cx="${x}" cy="${y}" r="8" fill="${dayColorOfStop(p.key)}" stroke="#fff" stroke-width="2.5"/><text x="${x+12}" y="${y+4}" font-size="13" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">${p.name}</text></g>`;
   }).join('');
 
-  // 预留的酒店/车站点
-  const extraDots = EXTRA_POINTS.map(p => {
-    const [x, y] = project(p.lat, p.lng, W, H);
+  // 预留酒店/车站
+  const extraDots = pts.filter(p => !p.key).map(p => {
+    const [x, y] = project(p.lng, p.lat);
     const isHotel = p.kind === 'hotel';
     const shape = isHotel
-      ? `<rect x="${x-7}" y="${y-7}" width="14" height="14" rx="3" fill="var(--warn)" stroke="var(--bg)" stroke-width="1.5"/>`
-      : `<rect x="${x-7}" y="${y-7}" width="14" height="14" rx="7" fill="var(--accent)" stroke="var(--bg)" stroke-width="1.5"/>`;
-    return `<g>${shape}<text x="${x}" y="${y-12}" text-anchor="middle" font-size="12" fill="var(--fg-soft)">${p.name}</text></g>`;
+      ? `<rect x="${x-8}" y="${y-8}" width="16" height="16" rx="3" fill="var(--warn)" stroke="#fff" stroke-width="2.5"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">住</text>`
+      : `<circle cx="${x}" cy="${y}" r="9" fill="var(--accent)" stroke="#fff" stroke-width="2.5"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">车</text>`;
+    return `<g>${shape}<text x="${x}" y="${y-14}" text-anchor="middle" font-size="11" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="3">${p.name}</text></g>`;
   }).join('');
 
-  $("#overviewSvg").innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${land}${lines}${dots}${extraDots}</svg>`;
+  // 底图用 <image> 引用一次性合成的 canvas PNG(绝对无缝)
+  $("#overviewSvg").innerHTML = `<svg viewBox="0 0 ${canvasW} ${canvasH}" preserveAspectRatio="xMidYMid meet"><image href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}"/>${lines}${dots}${extraDots}</svg>`;
 
   $("#overviewLegend").innerHTML = TRIP.days.map(d => {
     const on = overviewState.has(d.id);
@@ -1602,39 +1756,54 @@ function dayColorOfStop(key) {
 }
 
 /* ============================================================
- *  渲染:当日路线小图
+ *  渲染:当日路线图(高德真地图,景点到景点)
  * ============================================================ */
-function renderDayRouteSVG(dayId) {
+async function renderDayRouteSVG(dayId) {
   const d = TRIP.days.find(x => x.id === dayId);
   if (!d) return '';
-  const stops = d.events
-    .map(ev => ({ name: ev.place, lat: ev.lat, lng: ev.lng }))
-    .filter(p => p.lat != null);
-  if (stops.length < 2) return '<svg viewBox="0 0 400 200"></svg>';
+  // 收集当日所有有坐标的点(含酒店/车站预留点的 day 匹配)
+  const pts = d.events
+    .filter(ev => ev.lat != null)
+    .map((ev, i) => ({ name: ev.place || ev.title, lat: ev.lat, lng: ev.lng, idx: i, kind: "scene" }));
+  const hotelForDay = EXTRA_POINTS.find(p => p.day === d.id && p.kind === "hotel");
+  if (hotelForDay) pts.push({ name: hotelForDay.name, lat: hotelForDay.lat, lng: hotelForDay.lng, kind: "hotel" });
+  const stationForDay = EXTRA_POINTS.find(p => p.day === d.id && p.kind === "station");
+  if (stationForDay) pts.push({ name: stationForDay.name, lat: stationForDay.lat, lng: stationForDay.lng, kind: "station" });
+  if (pts.length < 1) return '<div style="padding:40px;text-align:center;color:var(--muted);">暂无定位点</div>';
 
-  const lats = stops.map(s => s.lat);
-  const lngs = stops.map(s => s.lng);
-  const minLat = Math.min(...lats) - 0.05, maxLat = Math.max(...lats) + 0.05;
-  const minLng = Math.min(...lngs) - 0.05, maxLng = Math.max(...lngs) + 0.05;
-  const W = 400, H = 200;
-  const proj = (lat, lng) => [
-    ((lng - minLng) / (maxLng - minLng || 1)) * (W - 60) + 30,
-    H - 30 - ((lat - minLat) / (maxLat - minLat || 1)) * (H - 60)
-  ];
+  const W = 800, H = 460;
+  const bounds = calcBounds(pts, 0.25);
+  const z = pickZoomBySpan(bounds, 30); // 按当日跨度动态选 zoom
+  const { url, project, canvasW, canvasH } = await loadTileCanvas(bounds, z);
 
-  const path = stops.map((s, i) => {
-    const [x, y] = proj(s.lat, s.lng);
-    return { x, y, name: s.name };
-  });
-  const pathD = path.map((p, i) => `${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
-  const dots = path.map((p, i) =>
-    `<g><circle cx="${p.x}" cy="${p.y}" r="5" fill="${d.color}" stroke="var(--bg)" stroke-width="2"/><text x="${p.x+8}" y="${p.y+4}" font-size="10" fill="var(--fg)">${i+1}. ${p.name||''}</text></g>`
-  ).join('');
+  // 路线
+  const pathCoords = pts.map(p => project(p.lng, p.lat));
+  let lines = '';
+  for (let i = 0; i < pathCoords.length - 1; i++) {
+    const [ax, ay] = pathCoords[i], [bx, by] = pathCoords[i+1];
+    const mx = (ax + bx) / 2, my = (ay + by) / 2;
+    lines += `<path d="M ${ax} ${ay} L ${bx} ${by}" stroke="${d.color}" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.95"/>`;
+  }
 
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
-    <path d="${pathD}" stroke="${d.color}" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="0" opacity="0.8"/>
-    ${dots}
-  </svg>`;
+  // 节点
+  const dots = pts.map((p, i) => {
+    const [x, y] = project(p.lng, p.lat);
+    let shape, label;
+    if (p.kind === "hotel") {
+      shape = `<rect x="${x-10}" y="${y-10}" width="20" height="20" rx="3" fill="var(--warn)" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">住</text>`;
+      label = p.name;
+    } else if (p.kind === "station") {
+      shape = `<circle cx="${x}" cy="${y}" r="11" fill="var(--accent)" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">车</text>`;
+      label = p.name;
+    } else {
+      shape = `<circle cx="${x}" cy="${y}" r="11" fill="${d.color}" stroke="#fff" stroke-width="3"/><text x="${x}" y="${y+5}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">${i+1}</text>`;
+      label = p.name;
+    }
+    const lx = x + 16, ly = y - 6;
+    return `<g>${shape}<text x="${lx}" y="${ly}" font-size="12" fill="var(--fg)" paint-order="stroke" stroke="#fff" stroke-width="3" stroke-linejoin="round">${label}</text></g>`;
+  }).join('');
+
+  return `<svg viewBox="0 0 ${canvasW} ${canvasH}" preserveAspectRatio="xMidYMid meet"><image href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}"/>${lines}${dots}</svg>`;
 }
 
 /* ============================================================
@@ -1712,6 +1881,38 @@ function initDynamicIsland() {
 }
 
 /* ============================================================
+ *  待办:默认按时间智能收起/展开,用户可手动切换
+ *  出发前(>= 当前日期 < 出发日): 展开
+ *  出发日及之后: 默认收起
+ *  用户手动切换会覆盖默认值,localStorage 记忆
+ * ============================================================ */
+function initTodoCollapse() {
+  const section = $("#todoSection");
+  const btn = $("#todoToggle");
+  if (!section || !btn) return;
+  const saved = localStorage.getItem('trip-todo-collapsed');
+  let collapsed;
+  if (saved !== null) {
+    collapsed = saved === '1';
+  } else {
+    // 默认:出发日及之后自动收起(让用户专注行程);出发前显示
+    const now = Date.now();
+    const start = +new Date(TRIP.startDate + 'T00:00:00+08:00');
+    collapsed = now >= start;
+  }
+  const apply = (c) => {
+    section.classList.toggle('is-collapsed', c);
+    btn.setAttribute('aria-expanded', String(!c));
+  };
+  apply(collapsed);
+  btn.addEventListener('click', () => {
+    collapsed = !collapsed;
+    localStorage.setItem('trip-todo-collapsed', collapsed ? '1' : '0');
+    apply(collapsed);
+  });
+}
+
+/* ============================================================
  *  init
  * ============================================================ */
 function init() {
@@ -1724,6 +1925,7 @@ function init() {
   renderTips();
   initTheme();
   initDynamicIsland();
+  initTodoCollapse();
   setInterval(renderNextUp, 1000);
 }
 document.addEventListener('DOMContentLoaded', init);
