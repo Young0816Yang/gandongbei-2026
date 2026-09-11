@@ -454,7 +454,7 @@
     color: var(--muted);
     font-size: 12px;
   }
-  .todo-toggle {
+  .sec-toggle {
     margin-left: auto;
     background: var(--card);
     border: 1px solid var(--border);
@@ -466,10 +466,17 @@
     font-weight: 500;
     line-height: 1.4;
   }
-  .todo-toggle:active { transform: scale(.96); }
-  #todoSection.is-collapsed #todo { display: none; }
-  #todoSection.is-collapsed .todo-toggle::before { content: "展开"; }
-  #todoSection:not(.is-collapsed) .todo-toggle::before { content: "收起"; }
+  .sec-toggle:active { transform: scale(.96); }
+  /* 待办区:收起时隐藏列表与图例 */
+  #todoSection.is-collapsed #todo,
+  #todoSection.is-collapsed .todo-legend { display: none; }
+  #todoSection.is-collapsed .sec-toggle::before { content: "展开"; }
+  #todoSection:not(.is-collapsed) .sec-toggle::before { content: "收起"; }
+  /* 已确认的预订:收起时隐藏 tab 与卡片 */
+  #bookingSection.is-collapsed #bookingTabs,
+  #bookingSection.is-collapsed #bookings { display: none; }
+  #bookingSection.is-collapsed .sec-toggle::before { content: "展开"; }
+  #bookingSection:not(.is-collapsed) .sec-toggle::before { content: "收起"; }
   .booking-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -790,6 +797,8 @@
   .todo-row.soon    { border-left: 4px solid #f59e0b; }
   .todo-row.week    { border-left: 4px solid #eab308; }
   .todo-row.normal  { border-left: 4px solid var(--border); }
+  /* 限时任务(放票/房源有限):固定高亮,不随剩余天数降级 */
+  .todo-row.limited { border-left: 4px solid #f59e0b; }
   .todo-row.high { background: linear-gradient(0deg, rgba(245,183,0,.04), rgba(245,183,0,.04)), var(--card); }
   .todo-head {
     display: flex;
@@ -835,6 +844,24 @@
   [data-theme="dark"] .due-tag.soon    { background: #431407; color: #fdba74; border-color: #7c2d12; }
   [data-theme="dark"] .due-tag.week    { background: #422006; color: #fde047; border-color: #713f12; }
   [data-theme="dark"] .due-tag.normal  { background: #1f2937; color: #9ca3af; border-color: #374151; }
+  /* 限时任务徽章:实心高亮,与时间分档的浅底徽章明显区分 */
+  .due-tag.limited { background: #f59e0b; color: #ffffff; border-color: #d97706; }
+  .due-tag.limited .due-cap { opacity: .85; }
+  [data-theme="dark"] .due-tag.limited { background: #b45309; color: #fffbeb; border-color: #92400e; }
+  /* 配色图例:说明「任务性质」与「剩余天数」两套逻辑 */
+  .todo-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: -6px 0 10px;
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .todo-legend .lg { display: inline-flex; align-items: center; gap: 6px; }
+  .todo-legend .sw { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .todo-legend .sws { display: inline-flex; gap: 2px; flex-shrink: 0; }
+  .todo-legend .sws i { width: 9px; height: 10px; border-radius: 2px; display: block; }
   .cat-tag {
     display: inline-block;
     padding: 2px 6px;
@@ -1138,14 +1165,21 @@
   <section data-page-node-id="D1MDJ8Xuo4XerBSm5bf5zJ" id="todoSection">
     <h2 data-page-node-id="bxhf4C0oYIRtuVH5A4WITP" style="display:flex;align-items:center;gap:10px;">
       <span>出发前待办</span>
-      <button class="todo-toggle" id="todoToggle" type="button" aria-label="展开/收起待办"></button>
+      <button class="sec-toggle" id="todoToggle" type="button" aria-label="展开/收起待办"></button>
     </h2>
+    <div class="todo-legend">
+      <span class="lg"><span class="sw" style="background:#f59e0b"></span>限时 · 放票/房源有限,固定高亮</span>
+      <span class="lg"><span class="sws"><i style="background:#ef4444"></i><i style="background:#f43f5e"></i><i style="background:#f59e0b"></i><i style="background:#eab308"></i><i style="background:#e5e7eb"></i></span>其余按剩余天数变色,灰 = 还有 8 天以上</span>
+    </div>
     <ul class="plain-list" id="todo" data-page-node-id="nvNLOzMYV4KRaaTK4uAftG"></ul>
   </section>
 
   <!-- 已确认的预订(分类 tab) -->
-  <section data-page-node-id="ARQMPS4irGFF7WIEm4mOFh">
-    <h2 data-page-node-id="py4770XKFmt5tQMSvPL4Cf">已确认的预订</h2>
+  <section data-page-node-id="ARQMPS4irGFF7WIEm4mOFh" id="bookingSection">
+    <h2 data-page-node-id="py4770XKFmt5tQMSvPL4Cf" style="display:flex;align-items:center;gap:10px;">
+      <span>已确认的预订</span>
+      <button class="sec-toggle" id="bookingToggle" type="button" aria-label="展开/收起预订"></button>
+    </h2>
     <div class="booking-tabs" id="bookingTabs" data-page-node-id="ARQMPS4irGFF7WIEm4mOFg"></div>
     <div id="bookings" data-page-node-id="94pG3MLC24CASHQbmC6sAu"></div>
   </section>
@@ -1579,7 +1613,7 @@ const TRIP = {
   todo: [
     {
       cat: "抢票", text: "9.16 抢 10.1 杭州 → 上饶 高铁(10:30 后)",
-      due: "2026-09-16T08:00+08:00", high: true,
+      due: "2026-09-16T08:00+08:00", high: true, limited: true,
       meta: "匹配行程 10:30 出发 · 杭州东早班 6 趟",
       detail: {
         type: "trains",
@@ -1598,7 +1632,7 @@ const TRIP = {
     },
     {
       cat: "抢票", text: "9.18 抢 10.3 上饶 → 婺源 高铁(11:30 后)",
-      due: "2026-09-18T08:00+08:00", high: true,
+      due: "2026-09-18T08:00+08:00", high: true, limited: true,
       meta: "匹配行程 11:30 出发 · 上饶→婺源 23 分钟",
       detail: {
         type: "trains",
@@ -1616,7 +1650,7 @@ const TRIP = {
     },
     {
       cat: "抢票", text: "9.19 抢 10.4 婺源 → 景德镇北 高铁(11:30 后)",
-      due: "2026-09-19T08:00+08:00", high: true,
+      due: "2026-09-19T08:00+08:00", high: true, limited: true,
       meta: "匹配行程 11:30 出发 · 行程仅 28 分钟",
       detail: {
         type: "trains",
@@ -1634,7 +1668,7 @@ const TRIP = {
     },
     {
       cat: "抢票", text: "9.20 抢 10.5 景德镇北 → 杭州 高铁(15:00 后)",
-      due: "2026-09-20T08:00+08:00", high: true,
+      due: "2026-09-20T08:00+08:00", high: true, limited: true,
       meta: "匹配行程 15:00 出发 · 国庆末返程",
       detail: {
         type: "trains",
@@ -1651,7 +1685,7 @@ const TRIP = {
     },
     {
       cat: "住宿", text: "9.25 前订 10.1 葛仙山镇民宿(独卫 2 间双床房)",
-      due: "2026-09-25T20:00+08:00", high: true,
+      due: "2026-09-25T20:00+08:00", high: true, limited: true,
       meta: "10.1 入住 · 10.2 退房 · 1 晚",
       detail: {
         type: "hotel",
@@ -1672,7 +1706,7 @@ const TRIP = {
     },
     {
       cat: "住宿", text: "9.25 前订 10.2 上饶市区酒店(独卫 2 间双床房)",
-      due: "2026-09-25T20:00+08:00", high: true,
+      due: "2026-09-25T20:00+08:00", high: true, limited: true,
       meta: "10.2 入住 · 10.3 退房 · 1 晚",
       detail: {
         type: "hotel",
@@ -1693,7 +1727,7 @@ const TRIP = {
     },
     {
       cat: "住宿", text: "9.25 前订 10.3 婺源县城民宿(独卫 2 间双床房)",
-      due: "2026-09-25T20:00+08:00", high: true,
+      due: "2026-09-25T20:00+08:00", high: true, limited: true,
       meta: "10.3 入住 · 10.4 退房 · 1 晚",
       detail: {
         type: "hotel",
@@ -1714,7 +1748,7 @@ const TRIP = {
     },
     {
       cat: "住宿", text: "9.25 前订 10.4 景德镇市区酒店(独卫 2 间双床房)",
-      due: "2026-09-25T20:00+08:00", high: true,
+      due: "2026-09-25T20:00+08:00", high: true, limited: true,
       meta: "10.4 入住 · 10.5 中午退房 · 1 晚",
       detail: {
         type: "hotel",
@@ -1753,7 +1787,7 @@ const TRIP = {
     },
     {
       cat: "门票", text: "9.27 早上抢中国陶瓷博物馆预约(10.4 下午场)",
-      due: "2026-09-27T07:30+08:00", high: true,
+      due: "2026-09-27T07:30+08:00", high: true, limited: true,
       meta: "免费但无现场票 · 9.27 抢 7 天后",
       detail: {
         type: "checklist",
@@ -1769,7 +1803,7 @@ const TRIP = {
     },
     {
       cat: "门票", text: "9.25 前订 10.1 葛仙村门票",
-      due: "2026-09-25T20:00+08:00", high: true,
+      due: "2026-09-25T20:00+08:00", high: true, limited: true,
       meta: "10.1 使用 · 套票含夜游",
       detail: {
         type: "ticket",
@@ -1818,7 +1852,7 @@ const TRIP = {
     },
     {
       cat: "门票", text: "9.30 前订 10.3 婺女洲门票(含打铁花演出)",
-      due: "2026-09-30T20:00+08:00", high: true,
+      due: "2026-09-30T20:00+08:00", high: true, limited: true,
       meta: "10.3 晚 · 含『打铁花』演出票",
       detail: {
         type: "ticket",
@@ -1842,7 +1876,7 @@ const TRIP = {
     },
     {
       cat: "门票", text: "9.30 前订 10.3 篁岭门票(含上下索道)",
-      due: "2026-09-30T20:00+08:00", high: true,
+      due: "2026-09-30T20:00+08:00", high: true, limited: true,
       meta: "10.3 上午 · 必买索道票",
       detail: {
         type: "ticket",
@@ -2593,13 +2627,17 @@ function renderTodo() {
       else if (delta < 86400000) remain = `今天 ${Math.ceil(delta/3600000)} 小时内`;
       else if (delta < 86400000 * 2) remain = '明天';
       else remain = `${Math.ceil(delta/86400000)} 天后`;
-      // 紧急程度分色
+      // 配色优先级:
+      //   1) 已逾期 → 一律红色(漏看的风险优先暴露,压过一切)
+      //   2) 限时任务(limited:抢票/订房/抢预约等放票或房源有限) → 固定高亮,不随剩余天数降级
+      //   3) 其余「可以先放一放」的确认类 → 按剩余天数分档
       state = delta < 0 ? 'overdue' :
+              t.limited ? 'limited' :
               delta < 86400000 ? 'urgent' :
               delta < 86400000 * 3 ? 'soon' :
               delta < 86400000 * 8 ? 'week' : 'normal';
       dueTag = `<span class="due-tag ${state}">
-        <span class="due-cap">截止</span>
+        <span class="due-cap">${t.limited ? '限时' : '截止'}</span>
         <b>${md} ${hm}</b>
         <i>${remain}</i>
       </span>`;
@@ -2786,25 +2824,15 @@ function initDynamicIsland() {
 }
 
 /* ============================================================
- *  待办:默认按时间智能收起/展开,用户可手动切换
- *  出发前(>= 当前日期 < 出发日): 展开
- *  出发日及之后: 默认收起
- *  用户手动切换会覆盖默认值,localStorage 记忆
+ *  区块展开/收起(通用):用户手动切换,localStorage 记忆
+ *  defaultCollapsed 是一个函数,在无历史记忆时决定初始状态
  * ============================================================ */
-function initTodoCollapse() {
-  const section = $("#todoSection");
-  const btn = $("#todoToggle");
+function setupSectionCollapse(sectionSel, toggleSel, storageKey, defaultCollapsed) {
+  const section = $(sectionSel);
+  const btn = $(toggleSel);
   if (!section || !btn) return;
-  const saved = localStorage.getItem('trip-todo-collapsed');
-  let collapsed;
-  if (saved !== null) {
-    collapsed = saved === '1';
-  } else {
-    // 默认:出发日及之后自动收起(让用户专注行程);出发前显示
-    const now = Date.now();
-    const start = +new Date(TRIP.startDate + 'T00:00:00+08:00');
-    collapsed = now >= start;
-  }
+  const saved = localStorage.getItem(storageKey);
+  let collapsed = (saved === '0' || saved === '1') ? saved === '1' : defaultCollapsed();
   const apply = (c) => {
     section.classList.toggle('is-collapsed', c);
     btn.setAttribute('aria-expanded', String(!c));
@@ -2812,9 +2840,22 @@ function initTodoCollapse() {
   apply(collapsed);
   btn.addEventListener('click', () => {
     collapsed = !collapsed;
-    localStorage.setItem('trip-todo-collapsed', collapsed ? '1' : '0');
+    localStorage.setItem(storageKey, collapsed ? '1' : '0');
     apply(collapsed);
   });
+}
+
+function initSectionCollapse() {
+  // 出发前待办:出发日及之后默认收起(让用户专注行程),出发前展开
+  setupSectionCollapse(
+    "#todoSection", "#todoToggle", 'trip-todo-collapsed',
+    () => Date.now() >= +new Date(TRIP.startDate + 'T00:00:00+08:00')
+  );
+  // 已确认的预订:默认展开(预订信息是行前高频查看内容)
+  setupSectionCollapse(
+    "#bookingSection", "#bookingToggle", 'trip-booking-collapsed',
+    () => false
+  );
 }
 
 /* ============================================================
@@ -2968,7 +3009,7 @@ function init() {
   renderTips();
   initTheme();
   initDynamicIsland();
-  initTodoCollapse();
+  initSectionCollapse();
   setInterval(renderNextUp, 1000);
 }
 document.addEventListener('DOMContentLoaded', init);
