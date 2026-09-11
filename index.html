@@ -850,12 +850,10 @@
   .cat-住宿   { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
   .cat-门票   { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
   .cat-兜底   { background: #f3f4f6; color: #4b5563; border-color: #d1d5db; }
-  .cat-行前   { background: #fdf4ff; color: #a21caf; border-color: #f0abfc; }
   [data-theme="dark"] .cat-抢票   { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
   [data-theme="dark"] .cat-住宿   { background: #1e3a8a; color: #bfdbfe; border-color: #1e40af; }
   [data-theme="dark"] .cat-门票   { background: #14532d; color: #bbf7d0; border-color: #166534; }
   [data-theme="dark"] .cat-兜底   { background: #1f2937; color: #d1d5db; border-color: #374151; }
-  [data-theme="dark"] .cat-行前   { background: #581c87; color: #f0abfc; border-color: #6b21a8; }
 
   .todo-text {
     flex: 1;
@@ -1109,10 +1107,10 @@ const TRIP = {
         {
           start: "2026-10-01T10:30:00+08:00",
           end:   "2026-10-01T12:30:00+08:00",
-          title: "杭州西站 → 上饶站",
+          title: "杭州 → 上饶",
           desc: "高铁约 2 小时(具体车次 9.16 抢票后填入)",
           transport: "高铁",
-          place: "杭州西站",
+          place: "杭州站",
           lat: 30.2919, lng: 120.0253,
           needsBooking: true,
           bookingNote: "9.16 早 8 点开抢"
@@ -1433,10 +1431,10 @@ const TRIP = {
         {
           start: "2026-10-05T15:00:00+08:00",
           end:   "2026-10-05T17:00:00+08:00",
-          title: "景德镇北 → 杭州西",
+          title: "景德镇北 → 杭州",
           desc: "高铁 2 小时",
           transport: "高铁",
-          place: "杭州西站",
+          place: "杭州站",
           lat: 30.2919, lng: 120.0253,
           needsBooking: true,
           bookingNote: "9.20 抢票"
@@ -1445,7 +1443,7 @@ const TRIP = {
     }
   ],
   bookings: [
-    { kind: "train", tag: "高铁", pending: true, title: "杭州西 → 上饶", rows: [
+    { kind: "train", tag: "高铁", pending: true, title: "杭州 → 上饶", rows: [
       { lbl: "日期", val: "2026-10-01" },
       { lbl: "时段", val: "10:30 – 12:30(占位,以出票为准)" },
       { lbl: "车次", val: "9.16 抢票后填入" },
@@ -1461,7 +1459,7 @@ const TRIP = {
       { lbl: "时段", val: "11:30 – 12:00(占位)" },
       { lbl: "车次", val: "9.19 抢票后填入" }
     ]},
-    { kind: "train", tag: "高铁", pending: true, title: "景德镇北 → 杭州西", rows: [
+    { kind: "train", tag: "高铁", pending: true, title: "景德镇北 → 杭州", rows: [
       { lbl: "日期", val: "2026-10-05" },
       { lbl: "时段", val: "15:00 – 17:00(占位)" },
       { lbl: "车次", val: "9.20 抢票后填入" }
@@ -1495,13 +1493,13 @@ const TRIP = {
   ],
   todo: [
     {
-      cat: "抢票", text: "9.16 早 8 点抢 10.1 杭州西 → 上饶 高铁",
+      cat: "抢票", text: "9.16 早 8 点抢 10.1 杭州 → 上饶 高铁",
       due: "2026-09-16T08:00+08:00", high: true,
       meta: "12306 提前 15 天放票 · 国庆早班车紧",
       detail: {
         type: "trains",
-        title: "10.1 杭州西 → 上饶 推荐车次",
-        note: "国庆杭州西 8 点前直达上饶的车较少,可考虑杭州东始发或时间稍作调整。",
+        title: "10.1 杭州 → 上饶 推荐车次",
+        note: "出发站只要是杭州即可,杭州西、杭州东、杭州南都可选,按哪趟有余票抢哪趟。",
         trains: [
           { no: "G1397", from: "杭州西", dep: "08:19", arr: "11:11", dur: "2h52m", price: "二等 ¥160", tag: "早首选" },
           { no: "G1629", from: "杭州西", dep: "14:44", arr: "17:02", dur: "2h18m", price: "二等 ¥182", tag: "下午" },
@@ -1509,7 +1507,7 @@ const TRIP = {
           { no: "G1493", from: "杭州东", dep: "14:22", arr: "16:22", dur: "2h00m", price: "二等 ¥160", tag: "备选 杭州东" },
           { no: "G1353", from: "杭州东", dep: "14:33", arr: "16:26", dur: "1h53m", price: "二等 ¥188", tag: "备选 杭州东" }
         ],
-        tip: "G1397 早上 8:19 出发 11:11 到上饶是杭州西直达最早班,二等座 ¥160。也可考虑杭州东始发车次,班次密。"
+        tip: "G1397(08:19→11:11)二等座 ¥160 是杭州西直达最早班;余票紧张时直接抢杭州东始发(班次更密),4 人二等合计约 ¥640-744。"
       }
     },
     {
@@ -1549,12 +1547,12 @@ const TRIP = {
       }
     },
     {
-      cat: "抢票", text: "9.20 抢 10.5 景德镇北 → 杭州西 高铁",
+      cat: "抢票", text: "9.20 抢 10.5 景德镇北 → 杭州 高铁",
       due: "2026-09-20T08:00+08:00", high: true,
       meta: "国庆末返程 · 1h58m 至 3h08m 不等",
       detail: {
         type: "trains",
-        title: "10.5 景德镇北 → 杭州西 推荐车次",
+        title: "10.5 景德镇北 → 杭州 推荐车次",
         note: "建议下午 14-15 点出发,衔接 Day 5 上午陶溪川 / 三宝村后从容返程。",
         trains: [
           { no: "G3068", from: "景德镇北", dep: "14:00", arr: "15:58", dur: "1h58m", price: "二等 ¥186", tag: "最快" },
@@ -1657,106 +1655,14 @@ const TRIP = {
         type: "checklist",
         title: "跨城专车备选",
         items: [
-          "杭州西 → 上饶:约 4.5h,¥800-1200/4 人",
+          "杭州 → 上饶:约 4.5h,¥800-1200/4 人",
           "上饶 → 婺源:约 1.2h,¥200-350/4 人",
           "婺源 → 景德镇北:约 1h,¥150-250/4 人",
-          "景德镇北 → 杭州西:约 4.5h,¥800-1200/4 人"
+          "景德镇北 → 杭州:约 4.5h,¥800-1200/4 人"
         ],
         tip: "滴滴跨城专车和国铁『铁路畅行』可作为补充,4 人分摊不亏。"
       }
     },
-    {
-      cat: "行前", text: "看 12306 国庆 10.1 杭州西 余票,如紧张准备抢短途票补票",
-      due: "2026-09-15T20:00+08:00",
-      meta: "提前 1 周侦察余票",
-      detail: {
-        type: "checklist",
-        title: "余票侦察",
-        items: [
-          "9.15 起每天 12306 看 10.1 杭州西 → 上饶 余票",
-          "如紧张:准备抢杭州东始发 + 杭州地铁接驳",
-          "备选:杭州南 → 上饶 G1493 等班次",
-          "高铁抢不到就跨城专车兜底"
-        ]
-      }
-    },
-    {
-      cat: "行前", text: "查 10.1 杭州西站 / 10.5 杭州西站 接驳(地铁/打车)",
-      due: "2026-09-30T20:00+08:00",
-      meta: "地铁 19 号线直达杭州西",
-      detail: {
-        type: "checklist",
-        title: "杭州西站接驳",
-        items: [
-          "10.1 杭州西 → 家:19 号线直达,运营至 23:00",
-          "10.5 杭州西 → 家:从景德镇返程约 16-18 点到,地铁回程可行",
-          "打车预留 1h(国庆打车排队)",
-          "如接驳时间紧,可提前约滴滴"
-        ]
-      }
-    },
-    {
-      cat: "行前", text: "查 10.1 杭州 / 上饶 / 婺源 / 景德镇 4 地天气,准备薄外套(山区夜晚凉)",
-      due: "2026-09-28T20:00+08:00",
-      meta: "山区温差 10℃+",
-      detail: {
-        type: "checklist",
-        title: "天气攻略",
-        items: [
-          "查 4 地 10.1-10.5 天气(中国天气网)",
-          "婺源山区夜间最低 12℃,必带薄外套",
-          "国庆江西多阴雨,雨伞必带",
-          "白天山区 UV 强,防晒霜 / 帽子"
-        ]
-      }
-    },
-    {
-      cat: "行前", text: "下载离线地图(高德 / 百度),山区信号可能弱",
-      due: "2026-09-30T20:00+08:00",
-      meta: "婺源山区 / 篁岭索道下",
-      detail: {
-        type: "checklist",
-        title: "离线地图",
-        items: [
-          "高德地图:下载『江西-上饶-婺源-景德镇』离线包",
-          "百度地图:作为兜底",
-          "篁岭山顶信号弱,必下离线",
-          "葛仙村缆车下也需离线包"
-        ]
-      }
-    },
-    {
-      cat: "行前", text: "行李:4 人共 4 箱 4 包的容量预估,确认民宿电梯 / 楼梯情况",
-      due: "2026-09-29T20:00+08:00",
-      meta: "国庆民宿电梯紧张",
-      detail: {
-        type: "checklist",
-        title: "行李清单",
-        items: [
-          "确认每晚民宿是否有电梯(葛仙山/婺源部分无电梯)",
-          "建议 4 箱总重 ≤80kg,避免超规",
-          "充电宝 ≤ 100Wh / 块(高铁限制)",
-          "行李分摊给 4 人轮流提"
-        ]
-      }
-    },
-    {
-      cat: "行前", text: "准备:身份证 / 充电宝 / 雨伞 / 常用药 / 汉服 / 拍照道具",
-      due: "2026-09-30T22:00+08:00",
-      meta: "出发前一晚",
-      detail: {
-        type: "checklist",
-        title: "随身物品清单",
-        items: [
-          "身份证(高铁/酒店必带)",
-          "充电宝 ≤ 100Wh / 雨伞 / 雨衣",
-          "常备药:感冒药 / 肠胃药 / 创可贴",
-          "汉服 / 拍照道具(婺源/景德镇出片)",
-          "现金 ¥500(婺源夜市/小店)",
-          "景区防滑鞋(婺源山路多)"
-        ]
-      }
-    }
   ],
   tips: [
     "<strong>高铁兜底</strong>:每段高铁抢不到就跨城专车,国庆价格可能 800–1500 元/段,4 人平摊不亏。",
@@ -2157,7 +2063,7 @@ function pickZoomBySpan(bounds, maxTiles = 36, minZoom = 4) {
  *  已预留酒店/车站坐标:后续订好后,往 EXTRA_POINTS 里填即可
  * ============================================================ */
 const PLACES = {
-  hz:  { name: "杭州西",   lat: 30.2919, lng: 120.0253, kind: "station" },
+  hz:  { name: "杭州",     lat: 30.2919, lng: 120.0253, kind: "station" },
   sr:  { name: "上饶",     lat: 28.4912, lng: 117.9522, kind: "city" },
   wy:  { name: "婺源",     lat: 29.2541, lng: 117.8611, kind: "city" },
   jdz: { name: "景德镇",   lat: 29.2940, lng: 117.2080, kind: "city" },
