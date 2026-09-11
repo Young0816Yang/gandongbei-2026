@@ -987,6 +987,91 @@
   .check-list { margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.8; color: var(--fg); }
   .check-list li { margin-bottom: 2px; }
   .check-list li::marker { color: var(--accent); }
+
+  /* 住宿详情 */
+  .hotel-stay {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 10px;
+    font-size: 12px;
+  }
+  .stay-tag {
+    background: rgba(245,183,0,.12);
+    color: var(--accent);
+    padding: 3px 9px;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+  .stay-arrow { color: var(--muted); }
+  .stay-nights {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .pros-cons {
+    margin: 8px 0;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+  }
+  .pros-cons h4 { margin: 0 0 4px; font-size: 11px; font-weight: 700; }
+  .pros h4 { color: #15803d; }
+  .cons h4 { color: #c2410c; }
+  [data-theme="dark"] .pros h4 { color: #86efac; }
+  [data-theme="dark"] .cons h4 { color: #fdba74; }
+  .pros-cons ul { margin: 0; padding-left: 0; list-style: none; font-size: 12px; line-height: 1.7; color: var(--fg); }
+  .pros-cons li { padding-left: 18px; position: relative; }
+  .pros-cons li b {
+    position: absolute; left: 0; top: 0;
+    display: inline-block; width: 14px; text-align: center;
+    font-weight: 800;
+  }
+  .pros li b { color: #15803d; }
+  .cons li b { color: #c2410c; }
+  [data-theme="dark"] .pros li b { color: #86efac; }
+  [data-theme="dark"] .cons li b { color: #fdba74; }
+
+  .hotel-notes { margin: 8px 0 0; }
+  .hotel-notes h4 { margin: 0 0 4px; font-size: 11px; font-weight: 700; color: var(--fg); }
+  .hotel-notes ul { margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.7; color: var(--fg); }
+  .hotel-notes li { margin-bottom: 1px; }
+  .hotel-notes li::marker { color: var(--accent); }
+
+  /* 门票详情 */
+  .ticket-use {
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(245,183,0,.08);
+    padding: 4px 9px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .ticket-booking { margin: 8px 0; }
+  .ticket-booking h4 { margin: 0 0 6px; font-size: 11px; font-weight: 700; color: var(--fg); }
+  .booking-list {
+    margin: 0; padding: 0; list-style: none;
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .booking-list li {
+    display: flex; align-items: baseline; gap: 8px;
+    font-size: 12px;
+    padding: 6px 9px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    line-height: 1.5;
+  }
+  .booking-list li b {
+    flex-shrink: 0;
+    display: inline-block;
+    min-width: 40px;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .booking-list li span { color: var(--fg); }
   .tips {
     background: var(--card);
     border: 1px solid var(--border);
@@ -1498,16 +1583,20 @@ const TRIP = {
       meta: "12306 提前 15 天放票 · 国庆早班车紧",
       detail: {
         type: "trains",
-        title: "10.1 杭州 → 上饶 推荐车次",
-        note: "出发站只要是杭州即可,杭州西、杭州东、杭州南都可选,按哪趟有余票抢哪趟。",
+        title: "10.1 杭州 → 上饶 推荐车次(早班车)",
+        note: "早上 7:00-10:00 杭州东/西/南共 8 趟直达车次,按需挑选;出发站只要是杭州范围内即可,看哪趟有余票抢哪趟。",
         trains: [
-          { no: "G1397", from: "杭州西", dep: "08:19", arr: "11:11", dur: "2h52m", price: "二等 ¥160", tag: "早首选" },
-          { no: "G1629", from: "杭州西", dep: "14:44", arr: "17:02", dur: "2h18m", price: "二等 ¥182", tag: "下午" },
-          { no: "G3757", from: "杭州西", dep: "17:23", arr: "19:39", dur: "2h16m", price: "二等 ¥186", tag: "晚上" },
-          { no: "G1493", from: "杭州东", dep: "14:22", arr: "16:22", dur: "2h00m", price: "二等 ¥160", tag: "备选 杭州东" },
-          { no: "G1353", from: "杭州东", dep: "14:33", arr: "16:26", dur: "1h53m", price: "二等 ¥188", tag: "备选 杭州东" }
+          { no: "G1321", from: "杭州东", dep: "07:00", arr: "09:09", dur: "2h09m", price: "二等 ¥169", tag: "最早" },
+          { no: "G2185", from: "杭州东", dep: "07:15", arr: "09:29", dur: "2h14m", price: "二等 ¥195", tag: "早班" },
+          { no: "G1421", from: "杭州东", dep: "07:16", arr: "09:23", dur: "2h07m", price: "二等 ¥169", tag: "早班" },
+          { no: "G1341", from: "杭州东", dep: "08:07", arr: "10:18", dur: "2h11m", price: "二等 ¥160", tag: "早班" },
+          { no: "G1397", from: "杭州西", dep: "08:19", arr: "11:11", dur: "2h52m", price: "二等 ¥160", tag: "西站" },
+          { no: "G203",  from: "杭州东", dep: "08:44", arr: "10:06", dur: "1h22m", price: "二等 ¥169", tag: "最快" },
+          { no: "G245",  from: "杭州东", dep: "08:49", arr: "10:11", dur: "1h22m", price: "二等 ¥188", tag: "快" },
+          { no: "G1631", from: "杭州东", dep: "08:55", arr: "10:43", dur: "1h48m", price: "二等 ¥160", tag: "上午" },
+          { no: "G1505", from: "杭州东", dep: "09:13", arr: "11:09", dur: "1h56m", price: "二等 ¥169", tag: "上午" }
         ],
-        tip: "G1397(08:19→11:11)二等座 ¥160 是杭州西直达最早班;余票紧张时直接抢杭州东始发(班次更密),4 人二等合计约 ¥640-744。"
+        tip: "杭州东始发班次最密(7:00-9:13 共 8 趟),杭州西只有 G1397 一趟早班(08:19)。如只想赶最早,抢 G1321(07:00);想最舒适不卡时间,抢 G1631(08:55)。4 人二等合计约 ¥640-780。"
       }
     },
     {
@@ -1565,35 +1654,103 @@ const TRIP = {
       }
     },
     {
-      cat: "住宿", text: "订 4 晚住宿(独卫 2 间双床房)",
+      cat: "住宿", text: "9.25 前订 10.1 葛仙山镇民宿(独卫 2 间双床房)",
       due: "2026-09-25T20:00+08:00", high: true,
-      meta: "国庆 1 周前订 · 葛仙山 / 上饶市区 / 婺源 / 景德镇",
+      meta: "10.1 入住 · 10.2 退房 · 1 晚",
       detail: {
-        type: "checklist",
-        title: "4 晚住宿清单",
-        items: [
-          "D1 10.1 葛仙山镇民宿(独卫 2 间双床房,4 人全接)",
-          "D2 10.2 上饶市区酒店(独卫 2 间双床房)",
-          "D3 10.3 婺源县城民宿(独卫 2 间双床房)",
-          "D4 10.4 景德镇市区酒店(独卫 2 间双床房,Day 5 中午退)"
+        type: "hotel",
+        title: "D1 葛仙山镇民宿",
+        checkin: "10.1 入住",
+        checkout: "10.2 退房",
+        nights: 1,
+        pros: ["靠近葛仙村景区,晚上看完夜景走回民宿即可", "部分民宿包接送(高铁站/景区入口)", "独卫双床房,4 人分 2 间,住得开"],
+        cons: ["国庆价格翻倍(¥600-1200/晚/间)", "山区民宿电梯少,3-5 层可能爬楼", "夜间较安静但 11 月后山区有蛇虫,提前备驱蚊"],
+        notes: [
+          "订房当天微信文字确认:接送时间、早餐、夜间加价",
+          "问清 4 人是否一次接完还是分 2 趟",
+          "行李较多提前问电梯/楼梯,4 箱 4 包",
+          "建议携程 + 美团 + 民宿官网三方比价"
         ],
-        tip: "国庆热门地点提前 1 周可能满房,推荐去哪儿/携程 + 民宿官网交叉对比。"
+        tip: "葛仙村晚上有夜游灯光秀,住镇上比住市区更方便夜场活动。国庆房间紧张,9.25 前不下手可能只剩贵房。"
       }
     },
     {
-      cat: "住宿", text: "订房时和民宿文字确认接送 / 夜间加价 / 4 人是否可全部接送",
+      cat: "住宿", text: "9.25 前订 10.2 上饶市区酒店(独卫 2 间双床房)",
+      due: "2026-09-25T20:00+08:00", high: true,
+      meta: "10.2 入住 · 10.3 退房 · 1 晚",
+      detail: {
+        type: "hotel",
+        title: "D2 上饶市区酒店",
+        checkin: "10.2 入住",
+        checkout: "10.3 退房",
+        nights: 1,
+        pros: ["市区酒店设施完善,电梯/早餐/前台 24h 都有", "距离上饶站打车 15-20 分钟,接驳便利", "餐饮选择多,晚上可去万达/步行街逛吃"],
+        cons: ["10.3 早上要赶高铁去婺源,行李要提前收好", "市区酒店无景区景观,主要看中便利性", "国庆价格偏高(¥400-800/晚/间)"],
+        notes: [
+          "建议选距上饶站 ≤5 km 的连锁(汉庭/全季/亚朵)",
+          "确认有电梯和 24h 前台(老人小孩友好)",
+          "问清早餐时段(高铁日早班车要 7 点前)",
+          "国庆前一周内订,9.25 是参考底线"
+        ],
+        tip: "上饶只是中转夜,设施过得去就行,把好房间预算留给婺源和景德镇。"
+      }
+    },
+    {
+      cat: "住宿", text: "9.25 前订 10.3 婺源县城民宿(独卫 2 间双床房)",
+      due: "2026-09-25T20:00+08:00", high: true,
+      meta: "10.3 入住 · 10.4 退房 · 1 晚",
+      detail: {
+        type: "hotel",
+        title: "D3 婺源县城民宿",
+        checkin: "10.3 入住",
+        checkout: "10.4 退房",
+        nights: 1,
+        pros: ["婺源县城(紫阳镇)餐饮/超市齐全,晚上可逛", "距离婺源站近,10.4 早上去篁岭接驳方便", "婺女洲距县城打车 20 分钟,夜场可晚归"],
+        cons: ["婺源民宿整体品质参差,要细看评价", "国庆房价可能 ¥500-1000/晚/间", "部分民宿隔音一般,带耳塞"],
+        notes: [
+          "婺源分『县城』『篁岭山脚』『婺女洲』三处,选县城最灵活",
+          "重点看『床品是否新』『独卫是否真独立』",
+          "10.3 晚要看婺女洲打铁花,选离婺女洲 ≤30 分钟车程",
+          "9.25 前订,婺源国庆节前一周通常满房"
+        ],
+        tip: "婺源民宿多,但好房源紧俏。重点看近 1 个月评价带图的,避雷『图片仅供参考』的店。"
+      }
+    },
+    {
+      cat: "住宿", text: "9.25 前订 10.4 景德镇市区酒店(独卫 2 间双床房)",
+      due: "2026-09-25T20:00+08:00", high: true,
+      meta: "10.4 入住 · 10.5 中午退房 · 1 晚",
+      detail: {
+        type: "hotel",
+        title: "D4 景德镇市区酒店",
+        checkin: "10.4 入住",
+        checkout: "10.5 中午退房",
+        nights: 1,
+        pros: ["景德镇市区(珠山区)距陶溪川/陶阳里/三宝村都不远", "酒店连锁多(亚朵/全季/桔子),性价比高", "距景德镇北站打车 20 分钟,10.5 返程便利"],
+        cons: ["10.5 中午退房要把行李寄存前台,玩半天再走", "景德镇市区夜生活一般,晚上主要在酒店整理", "国庆价格 ¥500-900/晚/间,溢价中等"],
+        notes: [
+          "优先选『人民广场/莲社北路』附近,离陶溪川近",
+          "10.5 退房时间:连锁酒店通常 12:00,可晚 1-2h",
+          "行李寄存一定要免费(国庆可能收费)",
+          "可问前台『附近有没有免费接送高铁站服务』"
+        ],
+        tip: "景德镇是最后一晚,选个有设计感的酒店(亚朵/陶舍),第二天退房后还能去陶阳里逛。"
+      }
+    },
+    {
+      cat: "住宿", text: "9.25 前和民宿/酒店文字确认接送 / 加价 / 退订",
       due: "2026-09-25T22:00+08:00", high: true,
-      meta: "订房当天文字沟通",
+      meta: "订房当天文字沟通 · 4 晚全部确认",
       detail: {
         type: "checklist",
-        title: "民宿确认事项",
+        title: "民宿/酒店通用确认清单",
         items: [
           "是否提供高铁站/景区接送(明确时间窗口)",
-          "国庆是否有夜间加价 / 早餐",
-          "4 人是否可全部接送 / 是否需要分 2 趟",
+          "国庆是否有夜间加价 / 早餐 / 停车",
+          "4 人是否可一次全接(还是分 2 趟)",
           "民宿电梯 / 楼梯情况(行李决定楼层)",
-          "是否提供停车(自驾场景)",
-          "退订政策(避免临时取消损失)"
+          "退订政策(避免临时取消损失)",
+          "延迟退房(10.5 中午退是否可行)"
         ],
         tip: "建议微信文字沟通并截图,以防民宿口头确认反悔。"
       }
@@ -1615,20 +1772,125 @@ const TRIP = {
       }
     },
     {
-      cat: "门票", text: "线上购买葛仙村 / 篁岭(含索道)/ 婺女洲 / 铜钹山 / 陶阳里 门票",
-      due: "2026-09-30T20:00+08:00",
-      meta: "国庆常限流 · 索道需提前",
+      cat: "门票", text: "9.25 前订 10.1 葛仙村门票",
+      due: "2026-09-25T20:00+08:00", high: true,
+      meta: "10.1 使用 · 套票含夜游",
       detail: {
-        type: "checklist",
-        title: "景点门票清单",
-        items: [
-          "D1 葛仙村(套票更划算)",
-          "D3 篁岭(含上下索道,必买)",
-          "D3 婺女洲(建议含『打铁花』演出票)",
-          "D2 铜钹山白花岩/九仙湖(2 选 1 或都买)",
-          "D4 陶阳里(免费 / 部分体验收费)"
+        type: "ticket",
+        title: "葛仙村门票",
+        useDate: "10.1",
+        booking: [
+          { label: "携程", val: "搜『葛仙村度假区』,套票更划算(含夜游/索道)" },
+          { label: "美团", val: "同款套票,偶尔更便宜" },
+          { label: "官方", val: "微信『葛仙山度假区』小程序,直营" },
+          { label: "现场", val: "售票窗口(国庆可能限流,不建议现场)" }
         ],
-        tip: "各景点都有官方公众号或小程序,国庆前 1 周开售,建议使用美团/携程官方直营。"
+        pros: [
+          "套票比单买门票+夜游便宜 ¥50-80",
+          "携程/美团常做国庆早鸟价"
+        ],
+        cons: [
+          "国庆限流,1 天 8000 张,售完即止",
+          "索道单买要再排 30 分钟队"
+        ],
+        tip: "10.1 早上先订,确认『当日有效 + 可改期』。"
+      }
+    },
+    {
+      cat: "门票", text: "9.30 前订 10.2 铜钹山门票",
+      due: "2026-09-30T20:00+08:00", high: true,
+      meta: "10.2 使用 · 白花岩/九仙湖",
+      detail: {
+        type: "ticket",
+        title: "铜钹山门票",
+        useDate: "10.2",
+        booking: [
+          { label: "携程", val: "搜『铜钹山』,白花岩+九仙湖可联票" },
+          { label: "美团", val: "联票常做活动" },
+          { label: "官方", val: "铜钹山公众号(本地游客为主)" }
+        ],
+        pros: [
+          "白花岩 + 九仙湖联票更划算(¥160 上下)",
+          "国庆景区内人少,体验比篁岭好"
+        ],
+        cons: [
+          "山上信号弱,提前下载离线地图",
+          "10.2 时间偏紧,体力不行就砍白花岩只玩九仙湖"
+        ],
+        tip: "铜钹山距上饶市区 1h 车程,可在携程加购『高铁站-景区』直通车。"
+      }
+    },
+    {
+      cat: "门票", text: "9.30 前订 10.3 婺女洲门票(含打铁花演出)",
+      due: "2026-09-30T20:00+08:00", high: true,
+      meta: "10.3 晚 · 含『打铁花』演出票",
+      detail: {
+        type: "ticket",
+        title: "婺女洲门票",
+        useDate: "10.3 晚",
+        booking: [
+          { label: "携程", val: "搜『婺女洲度假区』,勾选『含打铁花演出票』" },
+          { label: "官方", val: "『婺女洲度假区』公众号,直营" },
+          { label: "美团", val: "套票常搞活动" }
+        ],
+        pros: [
+          "打铁花 + 灯光秀演出票建议一起买(单独买要现场排队)",
+          "提前购票 18:30 入园,占正中湖面好位"
+        ],
+        cons: [
+          "打铁花遇雨可能停演(雨备方案见攻略)",
+          "国庆限流,18:00 后 不让进"
+        ],
+        tip: "打铁花通常 20:00 开演,建议选『门票+演出票』联票。"
+      }
+    },
+    {
+      cat: "门票", text: "9.30 前订 10.3 篁岭门票(含上下索道)",
+      due: "2026-09-30T20:00+08:00", high: true,
+      meta: "10.3 上午 · 必买索道票",
+      detail: {
+        type: "ticket",
+        title: "篁岭门票(含索道)",
+        useDate: "10.3",
+        booking: [
+          { label: "携程", val: "搜『篁岭』,门票 + 上下索道联票" },
+          { label: "官方", val: "『婺源篁岭』公众号,直营" },
+          { label: "美团", val: "联票可与婺女洲套票组合" },
+          { label: "现场", val: "门票可买,索道必须线上提前" }
+        ],
+        pros: [
+          "索道联票省 ¥40-60,避免现场排队",
+          "上午 9:00-10:00 入园人少,出片最佳"
+        ],
+        cons: [
+          "国庆索道排队 30 分钟+,错峰 10:00 后",
+          "山上阴雨,雨备可改室内『晒工坊』"
+        ],
+        tip: "篁岭门票分『A 索道』『B 索道』,选 A 线(通古村)。"
+      }
+    },
+    {
+      cat: "门票", text: "9.30 前订 10.5 陶阳里门票(部分体验收费)",
+      due: "2026-09-30T20:00+08:00",
+      meta: "10.5 上午 · 主街免费",
+      detail: {
+        type: "ticket",
+        title: "陶阳里门票",
+        useDate: "10.5",
+        booking: [
+          { label: "携程", val: "搜『陶阳里历史文化街区』,无需主门票" },
+          { label: "官方", val: "『陶阳里』公众号(免费入场,无需预约)" },
+          { label: "美团", val: "拉坯体验 / 陶艺 DIY 单买" }
+        ],
+        pros: [
+          "主街免费,无需门票",
+          "体验项目可现场扫码买,自由度高"
+        ],
+        cons: [
+          "拉坯 / 烧窑体验要现场另买(¥80-200/人)",
+          "国庆人流大,体验项目可能排队"
+        ],
+        tip: "陶阳里不订主门票,只订『拉坯体验』(可微信/支付宝现场付)。"
       }
     },
     {
@@ -2415,6 +2677,40 @@ function renderTodoDetail(d) {
       <div class="checklist-detail">
         <div class="detail-title">${escapeHtml(d.title)}</div>
         <ul class="check-list">${items}</ul>
+        ${d.tip ? `<div class="detail-tip">${escapeHtml(d.tip)}</div>` : ''}
+      </div>`;
+  }
+  if (d.type === 'hotel') {
+    const pros = (d.pros || []).map(i => `<li><b>✓</b>${escapeHtml(i)}</li>`).join('');
+    const cons = (d.cons || []).map(i => `<li><b>!</b>${escapeHtml(i)}</li>`).join('');
+    const notes = (d.notes || []).map(i => `<li>${escapeHtml(i)}</li>`).join('');
+    return `
+      <div class="hotel-detail">
+        <div class="detail-title">${escapeHtml(d.title)}</div>
+        <div class="hotel-stay">
+          <span class="stay-tag">${escapeHtml(d.checkin || '')}</span>
+          <span class="stay-arrow">→</span>
+          <span class="stay-tag">${escapeHtml(d.checkout || '')}</span>
+          <span class="stay-nights">${d.nights || 1} 晚</span>
+        </div>
+        ${pros ? `<div class="pros-cons"><div class="pros"><h4>优点</h4><ul>${pros}</ul></div></div>` : ''}
+        ${cons ? `<div class="pros-cons"><div class="cons"><h4>注意</h4><ul>${cons}</ul></div></div>` : ''}
+        ${notes ? `<div class="hotel-notes"><h4>订房要点</h4><ul>${notes}</ul></div>` : ''}
+        ${d.tip ? `<div class="detail-tip">${escapeHtml(d.tip)}</div>` : ''}
+      </div>`;
+  }
+  if (d.type === 'ticket') {
+    const pros = (d.pros || []).map(i => `<li><b>✓</b>${escapeHtml(i)}</li>`).join('');
+    const cons = (d.cons || []).map(i => `<li><b>!</b>${escapeHtml(i)}</li>`).join('');
+    const booking = d.booking || [];
+    const bookingHtml = booking.map(b => `<li><b>${escapeHtml(b.label)}</b><span>${escapeHtml(b.val)}</span></li>`).join('');
+    return `
+      <div class="ticket-detail">
+        <div class="detail-title">${escapeHtml(d.title)}</div>
+        ${d.useDate ? `<div class="ticket-use">使用日期:${escapeHtml(d.useDate)}</div>` : ''}
+        ${bookingHtml ? `<div class="ticket-booking"><h4>预订 / 购票方式</h4><ul class="booking-list">${bookingHtml}</ul></div>` : ''}
+        ${pros ? `<div class="pros-cons"><div class="pros"><h4>参考</h4><ul>${pros}</ul></div></div>` : ''}
+        ${cons ? `<div class="pros-cons"><div class="cons"><h4>注意</h4><ul>${cons}</ul></div></div>` : ''}
         ${d.tip ? `<div class="detail-tip">${escapeHtml(d.tip)}</div>` : ''}
       </div>`;
   }
