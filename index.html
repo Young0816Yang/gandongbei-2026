@@ -772,44 +772,223 @@
     border-color: transparent;
   }
 
-  /* ===== 待办 / 贴士 ===== */
-  .plain-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .plain-list li {
+  /* ===== 待办(突出截止时间 + 点击展开详情) ===== */
+  .plain-list { list-style: none; padding: 0; margin: 0; }
+  .todo-row {
     position: relative;
-    padding: 10px 12px 10px 28px;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    margin-bottom: 6px;
-    font-size: 13px;
-    color: var(--fg);
+    margin-bottom: 8px;
     box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: box-shadow .15s;
+  }
+  .todo-row:hover { box-shadow: var(--shadow-strong, 0 4px 12px rgba(0,0,0,.08)); }
+  .todo-row.overdue { border-left: 4px solid #ef4444; }
+  .todo-row.urgent  { border-left: 4px solid #f43f5e; }
+  .todo-row.soon    { border-left: 4px solid #f59e0b; }
+  .todo-row.week    { border-left: 4px solid #eab308; }
+  .todo-row.normal  { border-left: 4px solid var(--border); }
+  .todo-row.high { background: linear-gradient(0deg, rgba(245,183,0,.04), rgba(245,183,0,.04)), var(--card); }
+  .todo-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .todo-tags {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 64px;
+  }
+  .due-tag {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: 10px;
+    line-height: 1.25;
+    border: 1px solid transparent;
+    min-width: 66px;
+  }
+  .due-tag .due-cap {
+    font-size: 9px;
+    letter-spacing: 1px;
+    opacity: .7;
+    font-weight: 600;
+  }
+  .due-tag b { font-weight: 800; font-size: 11.5px; letter-spacing: .2px; white-space: nowrap; }
+  .due-tag i { font-style: normal; font-weight: 700; font-size: 10px; opacity: .9; margin-top: 1px; white-space: nowrap; }
+  .due-tag.overdue { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+  .due-tag.urgent  { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+  .due-tag.soon    { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+  .due-tag.week    { background: #fefce8; color: #a16207; border-color: #fde68a; }
+  .due-tag.normal  { background: #f3f4f6; color: #4b5563; border-color: #e5e7eb; }
+  [data-theme="dark"] .due-tag.overdue { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
+  [data-theme="dark"] .due-tag.urgent  { background: #4c0519; color: #fda4af; border-color: #881337; }
+  [data-theme="dark"] .due-tag.soon    { background: #431407; color: #fdba74; border-color: #7c2d12; }
+  [data-theme="dark"] .due-tag.week    { background: #422006; color: #fde047; border-color: #713f12; }
+  [data-theme="dark"] .due-tag.normal  { background: #1f2937; color: #9ca3af; border-color: #374151; }
+  .cat-tag {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    background: #fff7e6;
+    color: #b45309;
+    border: 1px solid #fde68a;
+  }
+  [data-theme="dark"] .cat-tag { background: #422006; color: #fde68a; border-color: #713f12; }
+  .cat-抢票   { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+  .cat-住宿   { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+  .cat-门票   { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+  .cat-兜底   { background: #f3f4f6; color: #4b5563; border-color: #d1d5db; }
+  .cat-行前   { background: #fdf4ff; color: #a21caf; border-color: #f0abfc; }
+  [data-theme="dark"] .cat-抢票   { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
+  [data-theme="dark"] .cat-住宿   { background: #1e3a8a; color: #bfdbfe; border-color: #1e40af; }
+  [data-theme="dark"] .cat-门票   { background: #14532d; color: #bbf7d0; border-color: #166534; }
+  [data-theme="dark"] .cat-兜底   { background: #1f2937; color: #d1d5db; border-color: #374151; }
+  [data-theme="dark"] .cat-行前   { background: #581c87; color: #f0abfc; border-color: #6b21a8; }
+
+  .todo-text {
+    flex: 1;
+    font-size: 13px;
     line-height: 1.5;
+    color: var(--fg);
+    padding-top: 2px;
+    word-break: break-word;
   }
-  .plain-list li::before {
-    content: "·";
-    position: absolute;
-    left: 12px;
-    top: 7px;
-    color: var(--accent);
-    font-size: 18px;
-    line-height: 1;
-  }
-  .plain-list li.high {
-    border-left: 3px solid var(--warn);
-    padding-left: 12px;
-  }
-  .plain-list li.high::before { display: none; }
-  .plain-list li .meta {
+  .todo-meta {
     display: block;
     color: var(--muted);
     font-size: 11px;
-    margin-top: 2px;
+    margin-top: 4px;
   }
+  .todo-expand {
+    flex-shrink: 0;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+  .todo-expand:hover { background: var(--card-hover, #f9fafb); color: var(--accent); border-color: var(--accent); }
+  .todo-row[data-open="true"] .todo-expand { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* 详情区(展开) */
+  .todo-detail {
+    border-top: 1px dashed var(--border);
+    padding: 12px 14px;
+    background: rgba(245,183,0,.03);
+    animation: slideDown .2s ease-out;
+  }
+  [data-theme="dark"] .todo-detail { background: rgba(245,183,0,.05); }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .detail-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 8px;
+  }
+  .detail-note {
+    font-size: 12px;
+    color: var(--fg-soft);
+    line-height: 1.6;
+    margin: 0 0 10px;
+    padding: 6px 10px;
+    background: rgba(245,183,0,.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+  }
+  .detail-tip {
+    font-size: 12px;
+    color: var(--accent);
+    line-height: 1.6;
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: rgba(245,183,0,.06);
+    border-radius: 4px;
+  }
+
+  /* 车次表 */
+  .train-list { display: flex; flex-direction: column; gap: 6px; }
+  .train-row {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 2px 10px;
+    padding: 8px 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    align-items: center;
+  }
+  .train-no {
+    grid-row: 1 / 3;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: .5px;
+  }
+  .train-time {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 12px;
+    color: var(--fg);
+  }
+  .train-time b { font-weight: 700; font-size: 13px; }
+  .train-time i { font-style: normal; color: var(--muted); margin: 0 2px; }
+  .train-dur {
+    margin-left: 6px;
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .train-from {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .train-price {
+    grid-column: 3;
+    grid-row: 1;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--fg);
+    text-align: right;
+  }
+  .train-tag {
+    grid-column: 3;
+    grid-row: 2;
+    font-size: 10px;
+    color: var(--accent);
+    text-align: right;
+    font-weight: 600;
+  }
+
+  /* 清单 */
+  .check-list { margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.8; color: var(--fg); }
+  .check-list li { margin-bottom: 2px; }
+  .check-list li::marker { color: var(--accent); }
   .tips {
     background: var(--card);
     border: 1px solid var(--border);
@@ -1315,22 +1494,269 @@ const TRIP = {
     ]}
   ],
   todo: [
-    { text: "9.16 早 8 点抢 10.1 杭州西 → 上饶 高铁", high: true, meta: "12306 提前 15 天放票" },
-    { text: "9.18 抢 10.3 上饶 → 婺源 高铁", high: true },
-    { text: "9.19 抢 10.4 婺源 → 景德镇北 高铁", high: true },
-    { text: "9.20 抢 10.5 景德镇北 → 杭州西 高铁", high: true },
-    { text: "每段高铁同步看跨城专车价格作为兜底", high: true, meta: "滴滴小程序『跨城专车』,国庆可能涨价" },
-    { text: "订 4 晚住宿(独卫 2 间双床房)", high: true, meta: "葛仙山镇 / 上饶市区 / 婺源县城 / 景德镇市区" },
-    { text: "订房时和民宿文字确认接送 / 夜间加价 / 4 人是否可全部接送", high: true },
-    { text: "9.27 早上抢中国陶瓷博物馆预约(10.4 下午场)", high: true, meta: "免费但无现场票,小程序『中国陶瓷博物馆』" },
-    { text: "线上购买葛仙村 / 篁岭(含索道)/ 婺女洲 / 铜钹山 / 陶阳里 门票", meta: "国庆常限流" },
-    { text: "婺女洲『打铁花』表演时间确认(通常 20:00,具体看景区公告)" },
-    { text: "看 12306 国庆 10.1 杭州西 余票,如紧张准备抢短途票补票" },
-    { text: "查 10.1 杭州西站 / 10.5 杭州西站 接驳(地铁/打车)" },
-    { text: "行李:4 人共 4 箱 4 包的容量预估,确认民宿电梯 / 楼梯情况" },
-    { text: "查 10.1 杭州 / 上饶 / 婺源 / 景德镇 4 地天气,准备薄外套(山区夜晚凉)" },
-    { text: "下载离线地图(高德 / 百度),山区信号可能弱" },
-    { text: "准备:身份证 / 充电宝 / 雨伞 / 常用药 / 汉服 / 拍照道具" }
+    {
+      cat: "抢票", text: "9.16 早 8 点抢 10.1 杭州西 → 上饶 高铁",
+      due: "2026-09-16T08:00+08:00", high: true,
+      meta: "12306 提前 15 天放票 · 国庆早班车紧",
+      detail: {
+        type: "trains",
+        title: "10.1 杭州西 → 上饶 推荐车次",
+        note: "国庆杭州西 8 点前直达上饶的车较少,可考虑杭州东始发或时间稍作调整。",
+        trains: [
+          { no: "G1397", from: "杭州西", dep: "08:19", arr: "11:11", dur: "2h52m", price: "二等 ¥160", tag: "早首选" },
+          { no: "G1629", from: "杭州西", dep: "14:44", arr: "17:02", dur: "2h18m", price: "二等 ¥182", tag: "下午" },
+          { no: "G3757", from: "杭州西", dep: "17:23", arr: "19:39", dur: "2h16m", price: "二等 ¥186", tag: "晚上" },
+          { no: "G1493", from: "杭州东", dep: "14:22", arr: "16:22", dur: "2h00m", price: "二等 ¥160", tag: "备选 杭州东" },
+          { no: "G1353", from: "杭州东", dep: "14:33", arr: "16:26", dur: "1h53m", price: "二等 ¥188", tag: "备选 杭州东" }
+        ],
+        tip: "G1397 早上 8:19 出发 11:11 到上饶是杭州西直达最早班,二等座 ¥160。也可考虑杭州东始发车次,班次密。"
+      }
+    },
+    {
+      cat: "抢票", text: "9.18 抢 10.3 上饶 → 婺源 高铁",
+      due: "2026-09-18T08:00+08:00", high: true,
+      meta: "国庆放票紧张 · 行程仅 23-31 分钟",
+      detail: {
+        type: "trains",
+        title: "10.3 上饶 → 婺源 推荐车次",
+        note: "上饶到婺源每天近 30 趟 G 车,23 分钟即到,选午前班次避开高峰。",
+        trains: [
+          { no: "G1630", from: "上饶", dep: "08:49", arr: "09:12", dur: "23m", price: "二等 ¥39.5", tag: "早首选" },
+          { no: "G1274", from: "上饶", dep: "08:58", arr: "09:21", dur: "23m", price: "二等 ¥39.5", tag: "早次选" },
+          { no: "G1648", from: "上饶", dep: "09:45", arr: "10:08", dur: "23m", price: "二等 ¥39.5", tag: "上午" },
+          { no: "G992", from: "上饶", dep: "10:48", arr: "11:11", dur: "23m", price: "二等 ¥39.5", tag: "上午" },
+          { no: "G982", from: "上饶", dep: "10:58", arr: "11:21", dur: "23m", price: "二等 ¥39.5", tag: "上午" }
+        ],
+        tip: "提前 5 分钟登录 12306 准备好身份证信息;这趟车非常密集,4 人一起二等座合计约 ¥158。"
+      }
+    },
+    {
+      cat: "抢票", text: "9.19 抢 10.4 婺源 → 景德镇北 高铁",
+      due: "2026-09-19T08:00+08:00", high: true,
+      meta: "国庆放票紧张 · 行程仅 28 分钟",
+      detail: {
+        type: "trains",
+        title: "10.4 婺源 → 景德镇北 推荐车次",
+        note: "建议 14-16 点出发,衔接 Day 4 上午篁岭后下山时间。",
+        trains: [
+          { no: "G1439", from: "婺源", dep: "14:34", arr: "15:02", dur: "28m", price: "二等 ¥26", tag: "首选" },
+          { no: "D6257", from: "婺源", dep: "15:30", arr: "15:58", dur: "28m", price: "二等 ¥24", tag: "最便宜" },
+          { no: "G1993", from: "婺源", dep: "15:35", arr: "16:04", dur: "29m", price: "二等 ¥25", tag: "下午" },
+          { no: "G5025", from: "婺源", dep: "16:38", arr: "17:07", dur: "29m", price: "二等 ¥26", tag: "下午" },
+          { no: "D6263", from: "婺源", dep: "17:24", arr: "17:52", dur: "28m", price: "二等 ¥26", tag: "傍晚" }
+        ],
+        tip: "为保证上午能从容游览篁岭,推荐 G1439(14:34)或 D6257(15:30),二等座 4 人合计约 ¥100-104。"
+      }
+    },
+    {
+      cat: "抢票", text: "9.20 抢 10.5 景德镇北 → 杭州西 高铁",
+      due: "2026-09-20T08:00+08:00", high: true,
+      meta: "国庆末返程 · 1h58m 至 3h08m 不等",
+      detail: {
+        type: "trains",
+        title: "10.5 景德镇北 → 杭州西 推荐车次",
+        note: "建议下午 14-15 点出发,衔接 Day 5 上午陶溪川 / 三宝村后从容返程。",
+        trains: [
+          { no: "G3068", from: "景德镇北", dep: "14:00", arr: "15:58", dur: "1h58m", price: "二等 ¥186", tag: "最快" },
+          { no: "G1452", from: "景德镇北", dep: "13:31", arr: "16:06", dur: "2h35m", price: "二等 ¥164", tag: "最早" },
+          { no: "G1520", from: "景德镇北", dep: "14:05", arr: "16:22", dur: "2h17m", price: "二等 ¥193", tag: "贵但稳" },
+          { no: "G3380", from: "景德镇北", dep: "15:12", arr: "18:20", dur: "3h08m", price: "二等 ¥160", tag: "最便宜" },
+          { no: "G902", from: "景德镇北", dep: "16:24", arr: "18:27", dur: "2h03m", price: "二等 ¥177", tag: "晚 1 班" }
+        ],
+        tip: "Day 5 是返程日,不要赶太晚的车,推荐 G3068(14:00-15:58)或 G1452(13:31-16:06),二等座 4 人合计约 ¥640-744。"
+      }
+    },
+    {
+      cat: "住宿", text: "订 4 晚住宿(独卫 2 间双床房)",
+      due: "2026-09-25T20:00+08:00", high: true,
+      meta: "国庆 1 周前订 · 葛仙山 / 上饶市区 / 婺源 / 景德镇",
+      detail: {
+        type: "checklist",
+        title: "4 晚住宿清单",
+        items: [
+          "D1 10.1 葛仙山镇民宿(独卫 2 间双床房,4 人全接)",
+          "D2 10.2 上饶市区酒店(独卫 2 间双床房)",
+          "D3 10.3 婺源县城民宿(独卫 2 间双床房)",
+          "D4 10.4 景德镇市区酒店(独卫 2 间双床房,Day 5 中午退)"
+        ],
+        tip: "国庆热门地点提前 1 周可能满房,推荐去哪儿/携程 + 民宿官网交叉对比。"
+      }
+    },
+    {
+      cat: "住宿", text: "订房时和民宿文字确认接送 / 夜间加价 / 4 人是否可全部接送",
+      due: "2026-09-25T22:00+08:00", high: true,
+      meta: "订房当天文字沟通",
+      detail: {
+        type: "checklist",
+        title: "民宿确认事项",
+        items: [
+          "是否提供高铁站/景区接送(明确时间窗口)",
+          "国庆是否有夜间加价 / 早餐",
+          "4 人是否可全部接送 / 是否需要分 2 趟",
+          "民宿电梯 / 楼梯情况(行李决定楼层)",
+          "是否提供停车(自驾场景)",
+          "退订政策(避免临时取消损失)"
+        ],
+        tip: "建议微信文字沟通并截图,以防民宿口头确认反悔。"
+      }
+    },
+    {
+      cat: "门票", text: "9.27 早上抢中国陶瓷博物馆预约(10.4 下午场)",
+      due: "2026-09-27T07:30+08:00", high: true,
+      meta: "免费但无现场票 · 9.27 抢 7 天后",
+      detail: {
+        type: "checklist",
+        title: "中国陶瓷博物馆预约",
+        items: [
+          "微信小程序搜『中国陶瓷博物馆』",
+          "选 10.4(周一,法定节假日通常开馆)下午场",
+          "4 人分别预约同一时段(可在同一订单备注同行人)",
+          "9.27 07:30 准时进,10:00 后名额通常释放"
+        ],
+        tip: "免费但需提前 7 天开放预约,国庆节票紧俏,建议 9.27 一早就进小程序。"
+      }
+    },
+    {
+      cat: "门票", text: "线上购买葛仙村 / 篁岭(含索道)/ 婺女洲 / 铜钹山 / 陶阳里 门票",
+      due: "2026-09-30T20:00+08:00",
+      meta: "国庆常限流 · 索道需提前",
+      detail: {
+        type: "checklist",
+        title: "景点门票清单",
+        items: [
+          "D1 葛仙村(套票更划算)",
+          "D3 篁岭(含上下索道,必买)",
+          "D3 婺女洲(建议含『打铁花』演出票)",
+          "D2 铜钹山白花岩/九仙湖(2 选 1 或都买)",
+          "D4 陶阳里(免费 / 部分体验收费)"
+        ],
+        tip: "各景点都有官方公众号或小程序,国庆前 1 周开售,建议使用美团/携程官方直营。"
+      }
+    },
+    {
+      cat: "门票", text: "婺女洲『打铁花』表演时间确认(通常 20:00,具体看景区公告)",
+      due: "2026-10-01T12:00+08:00",
+      meta: "建议 18:30 入园先占位",
+      detail: {
+        type: "checklist",
+        title: "打铁花攻略",
+        items: [
+          "通常 20:00 开演约 20 分钟",
+          "18:30 入园先逛灯光秀占位(正中湖面)",
+          "景区当日公告为准,关注婺女洲公众号",
+          "雨备方案:打铁花遇雨可能停演"
+        ],
+        tip: "如时间冲突,问景区『还有没有备场次』,夜场 21:00 可能还有一场。"
+      }
+    },
+    {
+      cat: "兜底", text: "每段高铁同步看跨城专车价格作为兜底",
+      due: "2026-09-20T20:00+08:00", high: true,
+      meta: "滴滴小程序『跨城专车』· 国庆可能涨价",
+      detail: {
+        type: "checklist",
+        title: "跨城专车备选",
+        items: [
+          "杭州西 → 上饶:约 4.5h,¥800-1200/4 人",
+          "上饶 → 婺源:约 1.2h,¥200-350/4 人",
+          "婺源 → 景德镇北:约 1h,¥150-250/4 人",
+          "景德镇北 → 杭州西:约 4.5h,¥800-1200/4 人"
+        ],
+        tip: "滴滴跨城专车和国铁『铁路畅行』可作为补充,4 人分摊不亏。"
+      }
+    },
+    {
+      cat: "行前", text: "看 12306 国庆 10.1 杭州西 余票,如紧张准备抢短途票补票",
+      due: "2026-09-15T20:00+08:00",
+      meta: "提前 1 周侦察余票",
+      detail: {
+        type: "checklist",
+        title: "余票侦察",
+        items: [
+          "9.15 起每天 12306 看 10.1 杭州西 → 上饶 余票",
+          "如紧张:准备抢杭州东始发 + 杭州地铁接驳",
+          "备选:杭州南 → 上饶 G1493 等班次",
+          "高铁抢不到就跨城专车兜底"
+        ]
+      }
+    },
+    {
+      cat: "行前", text: "查 10.1 杭州西站 / 10.5 杭州西站 接驳(地铁/打车)",
+      due: "2026-09-30T20:00+08:00",
+      meta: "地铁 19 号线直达杭州西",
+      detail: {
+        type: "checklist",
+        title: "杭州西站接驳",
+        items: [
+          "10.1 杭州西 → 家:19 号线直达,运营至 23:00",
+          "10.5 杭州西 → 家:从景德镇返程约 16-18 点到,地铁回程可行",
+          "打车预留 1h(国庆打车排队)",
+          "如接驳时间紧,可提前约滴滴"
+        ]
+      }
+    },
+    {
+      cat: "行前", text: "查 10.1 杭州 / 上饶 / 婺源 / 景德镇 4 地天气,准备薄外套(山区夜晚凉)",
+      due: "2026-09-28T20:00+08:00",
+      meta: "山区温差 10℃+",
+      detail: {
+        type: "checklist",
+        title: "天气攻略",
+        items: [
+          "查 4 地 10.1-10.5 天气(中国天气网)",
+          "婺源山区夜间最低 12℃,必带薄外套",
+          "国庆江西多阴雨,雨伞必带",
+          "白天山区 UV 强,防晒霜 / 帽子"
+        ]
+      }
+    },
+    {
+      cat: "行前", text: "下载离线地图(高德 / 百度),山区信号可能弱",
+      due: "2026-09-30T20:00+08:00",
+      meta: "婺源山区 / 篁岭索道下",
+      detail: {
+        type: "checklist",
+        title: "离线地图",
+        items: [
+          "高德地图:下载『江西-上饶-婺源-景德镇』离线包",
+          "百度地图:作为兜底",
+          "篁岭山顶信号弱,必下离线",
+          "葛仙村缆车下也需离线包"
+        ]
+      }
+    },
+    {
+      cat: "行前", text: "行李:4 人共 4 箱 4 包的容量预估,确认民宿电梯 / 楼梯情况",
+      due: "2026-09-29T20:00+08:00",
+      meta: "国庆民宿电梯紧张",
+      detail: {
+        type: "checklist",
+        title: "行李清单",
+        items: [
+          "确认每晚民宿是否有电梯(葛仙山/婺源部分无电梯)",
+          "建议 4 箱总重 ≤80kg,避免超规",
+          "充电宝 ≤ 100Wh / 块(高铁限制)",
+          "行李分摊给 4 人轮流提"
+        ]
+      }
+    },
+    {
+      cat: "行前", text: "准备:身份证 / 充电宝 / 雨伞 / 常用药 / 汉服 / 拍照道具",
+      due: "2026-09-30T22:00+08:00",
+      meta: "出发前一晚",
+      detail: {
+        type: "checklist",
+        title: "随身物品清单",
+        items: [
+          "身份证(高铁/酒店必带)",
+          "充电宝 ≤ 100Wh / 雨伞 / 雨衣",
+          "常备药:感冒药 / 肠胃药 / 创可贴",
+          "汉服 / 拍照道具(婺源/景德镇出片)",
+          "现金 ¥500(婺源夜市/小店)",
+          "景区防滑鞋(婺源山路多)"
+        ]
+      }
+    }
   ],
   tips: [
     "<strong>高铁兜底</strong>:每段高铁抢不到就跨城专车,国庆价格可能 800–1500 元/段,4 人平摊不亏。",
@@ -1980,10 +2406,121 @@ async function renderDayRouteSVG(dayId) {
  *  渲染:待办 / 贴士
  * ============================================================ */
 function renderTodo() {
-  $("#todo").innerHTML = TRIP.todo.map(t =>
-    `<li class="${t.high?'high':''}">${t.text}${t.meta?`<span class="meta">${t.meta}</span>`:''}</li>`
-  ).join('');
+  // 按截止时间排序(近 → 远),避免逾期漏看
+  const sorted = [...TRIP.todo].sort((a, b) => {
+    const at = a.due ? +new Date(a.due) : Infinity;
+    const bt = b.due ? +new Date(b.due) : Infinity;
+    return at - bt;
+  });
+  const now = Date.now();
+  const html = sorted.map(t => {
+    const dueMs = t.due ? +new Date(t.due) : null;
+    let dueTag = '', state = '';
+    if (dueMs != null) {
+      const delta = dueMs - now;
+      const dt = new Date(t.due);
+      const md = `${dt.getMonth()+1}.${dt.getDate()}`;
+      const hm = `${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;
+      // 剩余时间文案:一眼看出"还有几天"
+      let remain;
+      if (delta < -86400000) remain = `已逾期${Math.floor(-delta/86400000)}天`;
+      else if (delta < 0) remain = '今天已过';
+      else if (delta < 3600000) remain = `${Math.ceil(delta/60000)} 分钟后`;
+      else if (delta < 86400000) remain = `今天 ${Math.ceil(delta/3600000)} 小时内`;
+      else if (delta < 86400000 * 2) remain = '明天';
+      else remain = `${Math.ceil(delta/86400000)} 天后`;
+      // 紧急程度分色
+      state = delta < 0 ? 'overdue' :
+              delta < 86400000 ? 'urgent' :
+              delta < 86400000 * 3 ? 'soon' :
+              delta < 86400000 * 8 ? 'week' : 'normal';
+      dueTag = `<span class="due-tag ${state}">
+        <span class="due-cap">截止</span>
+        <b>${md} ${hm}</b>
+        <i>${remain}</i>
+      </span>`;
+    }
+    const cat = t.cat ? `<span class="cat-tag cat-${escapeAttr(t.cat)}">${t.cat}</span>` : '';
+    const detail = t.detail ? renderTodoDetail(t.detail) : '';
+    return `<li class="todo-row ${t.high?'high':''} ${state}">
+      <div class="todo-head" data-todo-toggle>
+        <div class="todo-tags">${dueTag}${cat}</div>
+        <div class="todo-text">${t.text}${t.meta?`<span class="todo-meta">${t.meta}</span>`:''}</div>
+        ${t.detail ? `<button class="todo-expand" type="button" aria-expanded="false">详情 ▾</button>` : ''}
+      </div>
+      ${detail ? `<div class="todo-detail" hidden>${detail}</div>` : ''}
+    </li>`;
+  }).join('');
+  $("#todo").innerHTML = html;
+  // 绑定展开/收起
+  $$('.todo-head[data-todo-toggle]', $("#todo")).forEach(head => {
+    head.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON') return; // 让按钮自己处理
+      const li = head.closest('.todo-row');
+      const det = li.querySelector('.todo-detail');
+      const btn = li.querySelector('.todo-expand');
+      if (!det) return;
+      const open = !det.hidden;
+      det.hidden = open;
+      if (btn) {
+        btn.setAttribute('aria-expanded', String(!open));
+        btn.textContent = open ? '详情 ▾' : '收起 ▴';
+      }
+    });
+  });
+  $$('.todo-expand', $("#todo")).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const li = btn.closest('.todo-row');
+      const det = li.querySelector('.todo-detail');
+      if (!det) return;
+      const open = !det.hidden;
+      det.hidden = open;
+      btn.setAttribute('aria-expanded', String(!open));
+      btn.textContent = open ? '详情 ▾' : '收起 ▴';
+    });
+  });
 }
+
+function renderTodoDetail(d) {
+  if (d.type === 'trains') {
+    const rows = d.trains.map(t => `
+      <div class="train-row">
+        <div class="train-no">${escapeHtml(t.no)}</div>
+        <div class="train-time">
+          <b>${escapeHtml(t.dep)}</b> <i>→</i> <b>${escapeHtml(t.arr)}</b>
+          <span class="train-dur">${escapeHtml(t.dur)}</span>
+        </div>
+        <div class="train-from">${escapeHtml(t.from)}</div>
+        <div class="train-price">${escapeHtml(t.price)}</div>
+        <div class="train-tag">${escapeHtml(t.tag || '')}</div>
+      </div>`).join('');
+    return `
+      <div class="trains-detail">
+        <div class="detail-title">${escapeHtml(d.title)}</div>
+        ${d.note ? `<p class="detail-note">${escapeHtml(d.note)}</p>` : ''}
+        <div class="train-list">${rows}</div>
+        ${d.tip ? `<div class="detail-tip">${escapeHtml(d.tip)}</div>` : ''}
+      </div>`;
+  }
+  if (d.type === 'checklist') {
+    const items = (d.items || []).map(i => `<li>${escapeHtml(i)}</li>`).join('');
+    return `
+      <div class="checklist-detail">
+        <div class="detail-title">${escapeHtml(d.title)}</div>
+        <ul class="check-list">${items}</ul>
+        ${d.tip ? `<div class="detail-tip">${escapeHtml(d.tip)}</div>` : ''}
+      </div>`;
+  }
+  return `<div class="detail-title">${escapeHtml(d.title || '详情')}</div>`;
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function escapeAttr(s) { return escapeHtml(s).replace(/\s+/g, '-'); }
 function renderTips() {
   $("#tips").innerHTML = TRIP.tips.map(t => `<p>· ${t}</p>`).join('');
 }
