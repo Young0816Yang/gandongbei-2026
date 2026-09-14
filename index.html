@@ -578,6 +578,49 @@
   details[open] .day-head .chevron { transform: rotate(90deg); }
 
   .day-body { padding: 0 0 8px; border-top: 1px solid var(--border-soft); }
+
+  /* 逐日行程:住宿信息块(已订 / 待订) */
+  .stay-box {
+    margin: 12px 16px 4px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--card-soft);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--muted);
+  }
+  .stay-box.is-booked { border-left-color: #2e9e5b; }
+  .stay-box-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px;
+  }
+  .stay-box-name { font-size: 14px; font-weight: 700; color: var(--fg); }
+  .stay-box-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(46,158,91,.14);
+    color: #2e9e5b;
+    border: 1px solid rgba(46,158,91,.35);
+    white-space: nowrap;
+  }
+  .stay-box-badge.pending {
+    background: var(--bg);
+    color: var(--muted);
+    border-color: var(--border);
+  }
+  [data-theme="dark"] .stay-box-badge { background: rgba(46,158,91,.2); color: #86efac; border-color: rgba(134,239,172,.35); }
+  [data-theme="dark"] .stay-box-badge.pending { background: var(--bg); color: var(--muted); border-color: var(--border); }
+  .stay-box-rows { display: grid; gap: 3px; }
+  .st-row { display: flex; gap: 8px; font-size: 12px; line-height: 1.6; }
+  .st-lbl {
+    flex: 0 0 32px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .st-val { flex: 1; color: var(--fg-soft); }
+
   .day-route-toggle {
     display: block;
     width: calc(100% - 32px);
@@ -1219,9 +1262,18 @@ const TRIP = {
       date: "2026-10-01",
       weekday: "周四",
       label: "Day 1",
-      route: "杭州 → 上饶 → 葛仙山镇",
+      route: "杭州 → 上饶 → 葛仙村",
       color: "#f5b700",
-      stay: { name: "葛仙山镇民宿(待订)", address: "上饶市铅山县葛仙山镇" },
+      stay: {
+        name: "上饶鑫邦大酒店",
+        booked: true,
+        address: "上饶市信州区凤凰中大道 999 号",
+        checkin: "10.1 14:00 后入住",
+        checkout: "10.2 12:00 前退房",
+        room: "高级双床房 · 含双早",
+        perks: "双人葛仙村门票 + 双人大巴往返接送 + 健身房 + 免费停车",
+        note: "预约成功后不支持取消或修改"
+      },
       events: [
         {
           start: "2026-10-01T10:30:00+08:00",
@@ -1236,48 +1288,48 @@ const TRIP = {
         },
         {
           start: "2026-10-01T12:30:00+08:00",
-          end:   "2026-10-01T14:00:00+08:00",
-          title: "上饶站 → 葛仙山镇民宿",
-          desc: "出站打车 1.2h,路上或到镇上吃午饭",
+          end:   "2026-10-01T13:30:00+08:00",
+          title: "上饶站 → 上饶鑫邦大酒店",
+          desc: "打车约 20 分钟(约 11km);到店先寄存行李,酒店或附近吃午饭,14:00 后正式入住",
           transport: "打车",
           place: "上饶站",
           lat: 28.4912, lng: 117.9522,
-          placeDest: "葛仙山镇",
-          latDest: 28.1316, lngDest: 117.6811
+          placeDest: "上饶鑫邦大酒店",
+          latDest: 28.4428, lngDest: 117.9323
         },
         {
-          start: "2026-10-01T14:00:00+08:00",
-          end:   "2026-10-01T15:30:00+08:00",
-          title: "民宿 → 葛仙村度假区",
-          desc: "民宿接送,只带小包",
-          transport: "民宿接送",
+          start: "2026-10-01T13:40:00+08:00",
+          end:   "2026-10-01T14:40:00+08:00",
+          title: "酒店 → 葛仙村度假区",
+          desc: "酒店套餐含往返大巴接送,车程约 1 小时;发车班次以酒店为准,需提前预约座位",
+          transport: "酒店大巴",
           place: "葛仙村度假区",
           lat: 28.1278, lng: 117.6733
         },
         {
-          start: "2026-10-01T15:30:00+08:00",
-          end:   "2026-10-01T19:30:00+08:00",
+          start: "2026-10-01T14:40:00+08:00",
+          end:   "2026-10-01T18:30:00+08:00",
           title: "葛仙村:灵宝仙街 / 众妙阁 / 水镜广场",
-          desc: "逛古街吃小吃,租汉服拍照",
+          desc: "逛古街吃小吃,租汉服拍照;门票已含在酒店套餐内(双人),剩余人数现场或线上补票",
           transport: "步行",
           place: "葛仙村度假区",
           lat: 28.1278, lng: 117.6733
         },
         {
-          start: "2026-10-01T19:30:00+08:00",
-          end:   "2026-10-01T21:10:00+08:00",
+          start: "2026-10-01T18:30:00+08:00",
+          end:   "2026-10-01T21:00:00+08:00",
           title: "众妙阁灯光秀 + 花灯夜景",
-          desc: "提前和民宿确认 21 点可接回",
+          desc: "灯光秀通常 19:30 / 20:00 各一场;提前和酒店确认返程大巴发车时刻",
           transport: "步行",
           place: "众妙阁",
           lat: 28.1282, lng: 117.6741
         },
         {
-          start: "2026-10-01T21:10:00+08:00",
-          end:   "2026-10-01T22:30:00+08:00",
-          title: "民宿接回 → 休息",
-          desc: "民宿预约车辆景区门口接回",
-          transport: "民宿接送",
+          start: "2026-10-01T21:00:00+08:00",
+          end:   "2026-10-01T22:00:00+08:00",
+          title: "酒店大巴接回 → 上饶鑫邦大酒店休息",
+          desc: "跟酒店大巴回市区(约 1 小时),当天不再转场",
+          transport: "酒店大巴",
           place: "葛仙村度假区",
           lat: 28.1278, lng: 117.6733
         }
@@ -1288,63 +1340,73 @@ const TRIP = {
       date: "2026-10-02",
       weekday: "周五",
       label: "Day 2",
-      route: "葛仙山 → 铜钹山 → 上饶市区",
+      route: "上饶市区 ⇄ 铜钹山",
       color: "#f08a24",
-      stay: { name: "上饶市区酒店(待订)", address: "上饶市信州区" },
+      stay: {
+        name: "上饶鑫邦大酒店(连住)",
+        booked: true,
+        address: "上饶市信州区凤凰中大道 999 号",
+        checkin: "10.2 14:00 后入住",
+        checkout: "10.3 12:00 前退房",
+        room: "高级双床房 · 含双早",
+        perks: "健身房 + 免费停车",
+        note: "与 D1 同一家酒店 · 请前台合并续住,免搬行李"
+      },
       events: [
         {
           start: "2026-10-02T10:30:00+08:00",
-          end:   "2026-10-02T12:00:00+08:00",
-          title: "起床 / 早餐 / 民宿送至上饶市区",
-          desc: "行李随车搬运,4 人全部带走",
-          transport: "民宿接送",
-          place: "葛仙山镇",
-          lat: 28.1316, lng: 117.6811
-        },
-        {
-          start: "2026-10-02T12:00:00+08:00",
-          end:   "2026-10-02T13:30:00+08:00",
-          title: "抵达上饶市区 / 午饭 / 办入住",
-          desc: "酒店先放行李",
+          end:   "2026-10-02T11:30:00+08:00",
+          title: "起床 / 酒店早餐 / 前台办续住",
+          desc: "含双早;请前台把两晚合并到同一间房,行李不用动",
           transport: "步行",
-          place: "上饶市区酒店",
-          lat: 28.4949, lng: 117.9712
+          place: "上饶鑫邦大酒店"
         },
         {
-          start: "2026-10-02T13:30:00+08:00",
-          end:   "2026-10-02T15:00:00+08:00",
-          title: "市区 → 广丰铜钹山",
-          desc: "打车约 1.5h,小众山水景区",
+          start: "2026-10-02T11:30:00+08:00",
+          end:   "2026-10-02T13:00:00+08:00",
+          title: "酒店 → 广丰铜钹山",
+          desc: "打车约 1-1.5h;铜钹山 10 月起执行冬季时段(约 08:30-16:30,16:00 停票),务必 16:00 前入园",
           transport: "打车",
-          place: "广丰铜钹山景区",
+          place: "上饶鑫邦大酒店",
+          lat: 28.4428, lng: 117.9323,
+          placeDest: "广丰铜钹山景区",
+          latDest: 28.3617, lngDest: 118.1861
+        },
+        {
+          start: "2026-10-02T13:00:00+08:00",
+          end:   "2026-10-02T14:00:00+08:00",
+          title: "景区购票 / 午饭 / 换乘观光车",
+          desc: "景点分散,园内靠观光车接驳;联票(九仙湖+鹊桥谷+白花岩)更划算",
+          transport: "观光车",
+          place: "铜钹山景区",
           lat: 28.3617, lng: 118.1861
         },
         {
-          start: "2026-10-02T15:00:00+08:00",
-          end:   "2026-10-02T18:00:00+08:00",
-          title: "铜钹山:九仙湖 + 白花岩",
-          desc: "慢节奏游玩,湖边散步拍照(白花岩离九仙湖约 20 分钟车程)",
-          transport: "景区交通",
+          start: "2026-10-02T14:00:00+08:00",
+          end:   "2026-10-02T16:30:00+08:00",
+          title: "铜钹山:九仙湖游船(可选)+ 白花岩",
+          desc: "九仙湖游船约 ¥50/人,想省时间可只玩湖边;白花岩离九仙湖约 20 分钟车程",
+          transport: "观光车 + 游船",
           place: "铜钹山九仙湖",
           lat: 28.3655, lng: 118.1820
         },
         {
+          start: "2026-10-02T16:30:00+08:00",
+          end:   "2026-10-02T18:00:00+08:00",
+          title: "铜钹山 → 上饶市区",
+          desc: "打车返回,约 1-1.5h",
+          transport: "打车",
+          place: "上饶市区",
+          lat: 28.4949, lng: 117.9712
+        },
+        {
           start: "2026-10-02T18:00:00+08:00",
           end:   "2026-10-02T20:00:00+08:00",
-          title: "返回市区 / 夜市 / 本地特色",
-          desc: "铅山烫粉、灯盏馃,错峰吃",
+          title: "市区夜市晚餐 → 回酒店休息",
+          desc: "铅山烫粉、灯盏馃,错峰吃;住宿不动,零赶路",
           transport: "打车",
           place: "上饶市区夜市",
           lat: 28.4931, lng: 117.9694
-        },
-        {
-          start: "2026-10-02T20:00:00+08:00",
-          end:   "2026-10-02T21:00:00+08:00",
-          title: "回酒店休息",
-          desc: "住宿不动,零赶路",
-          transport: "步行",
-          place: "上饶市区酒店",
-          lat: 28.4949, lng: 117.9712
         }
       ]
     },
@@ -1583,14 +1645,21 @@ const TRIP = {
       { lbl: "时段", val: "15:00 – 17:00(占位)" },
       { lbl: "车次", val: "9.21 抢票后填入" }
     ]},
-    { kind: "hotel", tag: "住宿", pending: true, title: "D1 葛仙山镇民宿(独卫 2 间)", rows: [
-      { lbl: "入住", val: "2026-10-01" },
-      { lbl: "退房", val: "2026-10-02 上午" },
-      { lbl: "需求", val: "和民宿文字确认: 接送 / 夜间加价 / 4 人全部接送" }
+    { kind: "hotel", tag: "住宿", title: "D1 上饶鑫邦大酒店", rows: [
+      { lbl: "入住", val: "10.1 14:00 后" },
+      { lbl: "退房", val: "10.2 12:00 前" },
+      { lbl: "地址", val: "上饶市信州区凤凰中大道 999 号(距上饶站约 11km)" },
+      { lbl: "房型", val: "高级双床房 · 含双早" },
+      { lbl: "含", val: "双人葛仙村门票 + 双人大巴往返接送 + 健身房 + 免费停车" },
+      { lbl: "退改", val: "预约成功后不支持取消或修改" }
     ]},
-    { kind: "hotel", tag: "住宿", pending: true, title: "D2 上饶市区酒店(独卫 2 间)", rows: [
-      { lbl: "入住", val: "2026-10-02" },
-      { lbl: "退房", val: "2026-10-03 上午" }
+    { kind: "hotel", tag: "住宿", title: "D2 上饶鑫邦大酒店(连住)", rows: [
+      { lbl: "入住", val: "10.2 14:00 后" },
+      { lbl: "退房", val: "10.3 12:00 前" },
+      { lbl: "地址", val: "上饶市信州区凤凰中大道 999 号(与 D1 同一家)" },
+      { lbl: "房型", val: "高级双床房 · 含双早" },
+      { lbl: "含", val: "健身房 + 免费停车" },
+      { lbl: "退改", val: "预约成功后不支持取消或修改" }
     ]},
     { kind: "hotel", tag: "住宿", pending: true, title: "D3 婺源县城民宿(独卫 2 间)", rows: [
       { lbl: "入住", val: "2026-10-03" },
@@ -1684,54 +1753,12 @@ const TRIP = {
       }
     },
     {
-      cat: "住宿", text: "9.25 前订 10.1 葛仙山镇民宿(独卫 2 间双床房)",
-      due: "2026-09-25T20:00+08:00", high: true, limited: true,
-      meta: "10.1 入住 · 10.2 退房 · 1 晚",
-      detail: {
-        type: "hotel",
-        title: "D1 葛仙山镇民宿",
-        checkin: "10.1 入住",
-        checkout: "10.2 退房",
-        nights: 1,
-        pros: ["靠近葛仙村景区,晚上看完夜景走回民宿即可", "部分民宿包接送(高铁站/景区入口)", "独卫双床房,4 人分 2 间,住得开"],
-        cons: ["国庆价格翻倍(¥600-1200/晚/间)", "山区民宿电梯少,3-5 层可能爬楼", "夜间较安静但 11 月后山区有蛇虫,提前备驱蚊"],
-        notes: [
-          "订房当天微信文字确认:接送时间、早餐、夜间加价",
-          "问清 4 人是否一次接完还是分 2 趟",
-          "行李较多提前问电梯/楼梯,4 箱 4 包",
-          "建议携程 + 美团 + 民宿官网三方比价"
-        ],
-        tip: "葛仙村晚上有夜游灯光秀,住镇上比住市区更方便夜场活动。国庆房间紧张,9.25 前不下手可能只剩贵房。"
-      }
-    },
-    {
-      cat: "住宿", text: "9.25 前订 10.2 上饶市区酒店(独卫 2 间双床房)",
-      due: "2026-09-25T20:00+08:00", high: true, limited: true,
-      meta: "10.2 入住 · 10.3 退房 · 1 晚",
-      detail: {
-        type: "hotel",
-        title: "D2 上饶市区酒店",
-        checkin: "10.2 入住",
-        checkout: "10.3 退房",
-        nights: 1,
-        pros: ["市区酒店设施完善,电梯/早餐/前台 24h 都有", "距离上饶站打车 15-20 分钟,接驳便利", "餐饮选择多,晚上可去万达/步行街逛吃"],
-        cons: ["10.3 早上要赶高铁去婺源,行李要提前收好", "市区酒店无景区景观,主要看中便利性", "国庆价格偏高(¥400-800/晚/间)"],
-        notes: [
-          "建议选距上饶站 ≤5 km 的连锁(汉庭/全季/亚朵)",
-          "确认有电梯和 24h 前台(老人小孩友好)",
-          "问清早餐时段(高铁日早班车要 7 点前)",
-          "国庆前一周内订,9.25 是参考底线"
-        ],
-        tip: "上饶只是中转夜,设施过得去就行,把好房间预算留给婺源和景德镇。"
-      }
-    },
-    {
-      cat: "住宿", text: "9.25 前订 10.3 婺源县城民宿(独卫 2 间双床房)",
+      cat: "住宿", text: "9.25 前订 10.3 婺源住宿(民宿或婺源鑫邦大酒店)",
       due: "2026-09-25T20:00+08:00", high: true, limited: true,
       meta: "10.3 入住 · 10.4 退房 · 1 晚",
       detail: {
         type: "hotel",
-        title: "D3 婺源县城民宿",
+        title: "D3 婺源县城住宿",
         checkin: "10.3 入住",
         checkout: "10.4 退房",
         nights: 1,
@@ -1741,9 +1768,10 @@ const TRIP = {
           "婺源分『县城』『篁岭山脚』『婺女洲』三处,选县城最灵活",
           "重点看『床品是否新』『独卫是否真独立』",
           "10.3 晚要看婺女洲打铁花,选离婺女洲 ≤30 分钟车程",
+          "可优先看『婺源鑫邦大酒店』——和已订的上饶鑫邦同属鑫邦文旅(也是葛仙村/婺女洲的运营方),常有『住宿+婺女洲门票』套餐,比单订民宿更省心",
           "9.25 前订,婺源国庆节前一周通常满房"
         ],
-        tip: "婺源民宿多,但好房源紧俏。重点看近 1 个月评价带图的,避雷『图片仅供参考』的店。"
+        tip: "婺源民宿多,但好房源紧俏。重点看近 1 个月评价带图的,避雷『图片仅供参考』的店;想省事就查鑫邦文旅的婺女洲住宿套餐。"
       }
     },
     {
@@ -1768,21 +1796,22 @@ const TRIP = {
       }
     },
     {
-      cat: "住宿", text: "9.25 前和民宿/酒店文字确认接送 / 加价 / 退订",
-      due: "2026-09-25T22:00+08:00", high: true,
-      meta: "订房当天文字沟通 · 4 晚全部确认",
+      cat: "住宿", text: "出发前电话确认 D1/D2 酒店的大巴班次与门票核销",
+      due: "2026-09-28T20:00+08:00", high: true, limited: true,
+      meta: "上饶鑫邦大酒店 · 大巴/门票/连住并房",
       detail: {
         type: "checklist",
-        title: "民宿/酒店通用确认清单",
+        title: "上饶鑫邦大酒店 确认清单(D1/D2)",
         items: [
-          "是否提供高铁站/景区接送(明确时间窗口)",
-          "国庆是否有夜间加价 / 早餐 / 停车",
-          "4 人是否可一次全接(还是分 2 趟)",
-          "民宿电梯 / 楼梯情况(行李决定楼层)",
-          "退订政策(避免临时取消损失)",
-          "延迟退房(10.5 中午退是否可行)"
+          "酒店→葛仙村往返大巴的固定发车时刻(去程几班、末班回程几点)",
+          "大巴座位是否需提前预约,4 人能否同车",
+          "套餐内『双人葛仙村门票』如何核销(前台换票 / 电子码)",
+          "4 人 2 间房的第 2 间是否同单预订,能否连住同一间免搬行李",
+          "早餐时段(10.2 早能否睡到自然醒再吃)",
+          "退改政策:该订单『预约成功后不支持取消或修改』,别轻易改动",
+          "自驾的话确认免费停车位(酒店有 249 个车位)"
         ],
-        tip: "建议微信文字沟通并截图,以防民宿口头确认反悔。"
+        tip: "打 0793-8399777 或平台内联系商家,把大巴时刻和门票核销方式问清并截图留存。"
       }
     },
     {
@@ -1802,52 +1831,53 @@ const TRIP = {
       }
     },
     {
-      cat: "门票", text: "9.25 前订 10.1 葛仙村门票",
+      cat: "门票", text: "补订 10.1 葛仙村门票(酒店套餐已含双人)",
       due: "2026-09-25T20:00+08:00", high: true, limited: true,
-      meta: "10.1 使用 · 套票含夜游",
+      meta: "10.1 使用 · D1 酒店套餐已含双人票 + 双人大巴",
       detail: {
         type: "ticket",
         title: "葛仙村门票",
         useDate: "10.1",
         booking: [
-          { label: "携程", val: "搜『葛仙村度假区』,套票更划算(含夜游/索道)" },
-          { label: "美团", val: "同款套票,偶尔更便宜" },
+          { label: "已含", val: "上饶鑫邦大酒店 D1 套餐已含『双人葛仙村门票 + 双人大巴往返接送』" },
+          { label: "补票", val: "剩余人数在携程/美团搜『葛仙村度假区』单买或套票" },
           { label: "官方", val: "微信『葛仙山度假区』小程序,直营" },
           { label: "现场", val: "售票窗口(国庆可能限流,不建议现场)" }
         ],
         pros: [
-          "套票比单买门票+夜游便宜 ¥50-80",
-          "携程/美团常做国庆早鸟价"
+          "2 人门票已由酒店套餐覆盖,门票支出直接减半",
+          "含夜游/索道的套票比单买便宜 ¥50-80"
         ],
         cons: [
-          "国庆限流,1 天 8000 张,售完即止",
-          "索道单买要再排 30 分钟队"
+          "套餐门票的核销方式要先和酒店确认(前台换票还是电子码)",
+          "国庆限流,1 天 8000 张,售完即止"
         ],
-        tip: "10.1 早上先订,确认『当日有效 + 可改期』。"
+        tip: "先住店确认套票里那 2 张票怎么用,再决定剩下 2 人线上补票还是一次买套票;若 4 人共 2 间房,大概率 4 张票都已含,先问清再买,别重复购票。"
       }
     },
     {
-      cat: "门票", text: "9.30 前订 10.2 铜钹山门票",
+      cat: "门票", text: "9.30 前订 10.2 铜钹山门票(含观光车)",
       due: "2026-09-30T20:00+08:00", high: true,
-      meta: "10.2 使用 · 白花岩/九仙湖",
+      meta: "10.2 使用 · 观光车必买 · 游船可选",
       detail: {
         type: "ticket",
-        title: "铜钹山门票",
+        title: "铜钹山门票 + 观光车",
         useDate: "10.2",
         booking: [
-          { label: "携程", val: "搜『铜钹山』,白花岩+九仙湖可联票" },
-          { label: "美团", val: "联票常做活动" },
-          { label: "官方", val: "铜钹山公众号(本地游客为主)" }
+          { label: "携程", val: "搜『铜钹山』,九仙湖+鹊桥谷+白花岩+木城关联票 ¥80 最划算" },
+          { label: "美团", val: "同款联票,常做活动" },
+          { label: "观光车", val: "景点分散,园内必须靠观光车接驳,一般现场购票" },
+          { label: "游船", val: "九仙湖游船约 ¥50/人,可选,现场买" }
         ],
         pros: [
-          "白花岩 + 九仙湖联票更划算(¥160 上下)",
+          "4 景区联票 ¥80/人,比单买(25+30+… )省不少",
           "国庆景区内人少,体验比篁岭好"
         ],
         cons: [
-          "山上信号弱,提前下载离线地图",
-          "10.2 时间偏紧,体力不行就砍白花岩只玩九仙湖"
+          "10 月起执行冬季时段(约 08:30-16:30,16:00 停票),16:00 前务必入园",
+          "山上信号弱,提前下载离线地图;景区补给点少,自备水和干粮"
         ],
-        tip: "铜钹山距上饶市区 1h 车程,可在携程加购『高铁站-景区』直通车。"
+        tip: "铜钹山距上饶市区约 1h 车程;观光车是园内刚需,游船按时间取舍。出行前一天再核一次官方营业时段(冬季可能提前闭园)。"
       }
     },
     {
@@ -1958,14 +1988,15 @@ const TRIP = {
   ],
   tips: [
     "<strong>高铁兜底</strong>:每段高铁抢不到就跨城专车,国庆价格可能 800–1500 元/段,4 人平摊不亏。",
-    "<strong>民宿接送确认</strong>:订房当天就要文字确认接送时间,葛仙山/婺源民宿很多是包接送的但要提前一天约。",
+    "<strong>酒店大巴</strong>:D1 上饶鑫邦大酒店套餐含『双人大巴往返接送(葛仙村)』,发车有固定班次,订好后务必电话确认时刻并预约座位,夜场回程别错过末班。",
+    "<strong>连住并房</strong>:D1/D2 是同一家酒店的两笔订单,10.2 中午退房时请前台把两晚合并到同一间房,行李就不用搬。",
     "<strong>博物馆预约</strong>:中国陶瓷博物馆免费但无现场票,『中国陶瓷博物馆』小程序提前 7 天约,9.27 早上抢。",
     "<strong>婺女洲打铁花</strong>:通常 20:00 开演约 20 分钟,建议 18:30 入园先逛灯光秀占好位,具体看景区当日公告。",
     "<strong>国庆人流</strong>:篁岭索道和葛仙村入口常排队 30 分钟+,错峰安排在 10:00 入园。",
-    "<strong>开车时长</strong>:铜钹山白花岩离九仙湖约 20 分钟,2 个点全要走 3.5h 起步,Day 2 时间已偏紧,体力不够就砍白花岩。",
+    "<strong>铜钹山时段</strong>:10 月起按冬季营业时段(约 08:30-16:30、16:00 停票),行程按 16:00 前入园安排;园内靠观光车接驳,九仙湖游船可选。",
     "<strong>博物馆闭馆</strong>:10.5 是周一,如临时想加博物馆行程先查开放公告(国庆法定节假日通常开)。",
     "<strong>返程缓冲</strong>:10.5 Day 5 是缓冲日,三宝村/抚州弄随体力取舍,15:00 高铁不要冒险。",
-    "<strong>跨城打车</strong>:高铁站打车到民宿要预留 1.5h(等车 + 路途),不要卡点叫车。",
+    "<strong>跨城打车</strong>:酒店到景区、市区到铜钹山打车都按 1-1.5h 预留(等车 + 路途),不要卡点叫车。",
     "<strong>支付</strong>:景德镇夜市 / 婺源小店部分只收现金或微信,备 500 元现金。"
   ]
 };
@@ -2147,7 +2178,23 @@ function renderBookings() {
 function renderDays() {
   const host = $("#days");
   host.innerHTML = TRIP.days.map((d, i) => {
-    const stayLine = d.stay ? `<div class="info-row"><span class="lbl">住</span><span class="val">${d.stay.name}${d.stay.address?' · '+d.stay.address:''}</span></div>` : '';
+    const s = d.stay;
+    const stayRows = s ? [
+      s.checkin  ? { l: '入住', v: s.checkin }  : null,
+      s.checkout ? { l: '退房', v: s.checkout } : null,
+      s.room     ? { l: '房型', v: s.room }     : null,
+      s.perks    ? { l: '含',   v: s.perks }    : null,
+      s.address  ? { l: '地址', v: s.address }  : null,
+      s.note     ? { l: '注意', v: s.note }     : null
+    ].filter(Boolean).map(r => `<div class="st-row"><span class="st-lbl">${r.l}</span><span class="st-val">${r.v}</span></div>`).join('') : '';
+    const stayBlock = s ? `
+        <div class="stay-box ${s.booked ? 'is-booked' : ''}">
+          <div class="stay-box-head">
+            <span class="stay-box-name">${s.name}</span>
+            <span class="stay-box-badge ${s.booked ? '' : 'pending'}">${s.booked ? '已订' : '待订'}</span>
+          </div>
+          <div class="stay-box-rows">${stayRows}</div>
+        </div>` : '';
     return `
     <details class="day-block" ${i===0?'open':''} id="day-${d.id}">
       <summary class="day-head">
@@ -2159,9 +2206,7 @@ function renderDays() {
         <span class="chevron">›</span>
       </summary>
       <div class="day-body">
-        ${d.stay ? `<div class="timeline" style="padding: 10px 16px 4px; border-bottom: 1px solid var(--border-soft);">
-          <div class="info-row"><span class="lbl" style="width: 40px; color: var(--muted); font-size: 12px;">夜宿</span><span class="val" style="font-size: 13px;">${d.stay.name}</span></div>
-        </div>` : ''}
+        ${stayBlock}
         <button class="day-route-toggle" data-route-toggle="${d.id}">查看当日路线</button>
         <div class="day-route-svg" data-route-svg="${d.id}" hidden></div>
         <a class="day-nav-btn" data-daynav="${d.id}" href="#" onclick="event.preventDefault();">一键规划全天路线(高德)</a>
@@ -2368,13 +2413,14 @@ const PLACES = {
 
 // 预留:酒店/车站订好后,把坐标填这里,地图会自动显示
 // 格式: { name, lat, lng, kind: "hotel" | "station", day: "d1" }
+// day 支持多天:"d1,d2" 表示该点多天复用(地图上只画一次)
 const EXTRA_POINTS = [
-  // { name: "葛仙山镇民宿", lat: 28.13, lng: 117.68, kind: "hotel", day: "d1" },
+  { name: "上饶鑫邦大酒店", lat: 28.4428, lng: 117.9323, kind: "hotel", day: "d1,d2" }
 ];
 
 const ROUTE_SEQ = {
   d1: { path: ["hz","sr","gxs"] },
-  d2: { path: ["gxs","tbs","sr"] },
+  d2: { path: ["sr","tbs","sr"] },
   d3: { path: ["sr","wy","hl","wnz","wy"] },
   d4: { path: ["wy","jdz","taog"] },
   d5: { path: ["jdz","jdz","hz"] }
@@ -2491,9 +2537,12 @@ async function renderDayRouteSVG(dayId) {
   const pts = d.events
     .filter(ev => ev.lat != null)
     .map((ev, i) => ({ name: ev.place || ev.title, lat: ev.lat, lng: ev.lng, idx: i, kind: "scene" }));
-  const hotelForDay = EXTRA_POINTS.find(p => p.day === d.id && p.kind === "hotel");
+  const pointForDay = (kind, dayId) => EXTRA_POINTS.find(p =>
+    p.kind === kind && String(p.day || '').split(',').map(s => s.trim()).includes(dayId)
+  );
+  const hotelForDay = pointForDay("hotel", d.id);
   if (hotelForDay) pts.push({ name: hotelForDay.name, lat: hotelForDay.lat, lng: hotelForDay.lng, kind: "hotel" });
-  const stationForDay = EXTRA_POINTS.find(p => p.day === d.id && p.kind === "station");
+  const stationForDay = pointForDay("station", d.id);
   if (stationForDay) pts.push({ name: stationForDay.name, lat: stationForDay.lat, lng: stationForDay.lng, kind: "station" });
   if (pts.length < 1) return '<div style="padding:40px;text-align:center;color:var(--muted);">暂无定位点</div>';
 
