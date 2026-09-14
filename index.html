@@ -1227,12 +1227,12 @@ const TRIP = {
           start: "2026-10-01T10:30:00+08:00",
           end:   "2026-10-01T12:30:00+08:00",
           title: "杭州 → 上饶",
-          desc: "高铁约 2 小时(具体车次 9.16 抢票后填入)",
+          desc: "高铁约 2 小时(具体车次 9.17 抢票后填入)",
           transport: "高铁",
           place: "杭州站",
           lat: 30.2919, lng: 120.0253,
           needsBooking: true,
-          bookingNote: "9.16 早 8 点开抢"
+          bookingNote: "9.17 10:45 开抢(杭州东/西站起售)"
         },
         {
           start: "2026-10-01T12:30:00+08:00",
@@ -1375,7 +1375,7 @@ const TRIP = {
           place: "婺源站",
           lat: 29.2541, lng: 117.8611,
           needsBooking: true,
-          bookingNote: "9.18 抢票"
+          bookingNote: "9.19 17:00 抢票(上饶站起售)"
         },
         {
           start: "2026-10-03T12:30:00+08:00",
@@ -1460,7 +1460,7 @@ const TRIP = {
           place: "景德镇北站",
           lat: 29.3550, lng: 117.2341,
           needsBooking: true,
-          bookingNote: "9.19 抢票"
+          bookingNote: "9.20 17:30 抢票(婺源站起售)"
         },
         {
           start: "2026-10-04T12:00:00+08:00",
@@ -1556,7 +1556,7 @@ const TRIP = {
           place: "杭州站",
           lat: 30.2919, lng: 120.0253,
           needsBooking: true,
-          bookingNote: "9.20 抢票"
+          bookingNote: "9.21 17:00 抢票(景德镇北站起售)"
         }
       ]
     }
@@ -1565,23 +1565,23 @@ const TRIP = {
     { kind: "train", tag: "高铁", pending: true, title: "杭州 → 上饶", rows: [
       { lbl: "日期", val: "2026-10-01" },
       { lbl: "时段", val: "10:30 – 12:30(占位,以出票为准)" },
-      { lbl: "车次", val: "9.16 抢票后填入" },
+      { lbl: "车次", val: "9.17 抢票后填入" },
       { lbl: "兜底", val: "跨城专车(滴滴小程序『跨城专车』)" }
     ]},
     { kind: "train", tag: "高铁", pending: true, title: "上饶 → 婺源", rows: [
       { lbl: "日期", val: "2026-10-03" },
       { lbl: "时段", val: "11:30 – 12:30(占位)" },
-      { lbl: "车次", val: "9.18 抢票后填入" }
+      { lbl: "车次", val: "9.19 抢票后填入" }
     ]},
     { kind: "train", tag: "高铁", pending: true, title: "婺源 → 景德镇北", rows: [
       { lbl: "日期", val: "2026-10-04" },
       { lbl: "时段", val: "11:30 – 12:00(占位)" },
-      { lbl: "车次", val: "9.19 抢票后填入" }
+      { lbl: "车次", val: "9.20 抢票后填入" }
     ]},
     { kind: "train", tag: "高铁", pending: true, title: "景德镇北 → 杭州", rows: [
       { lbl: "日期", val: "2026-10-05" },
       { lbl: "时段", val: "15:00 – 17:00(占位)" },
-      { lbl: "车次", val: "9.20 抢票后填入" }
+      { lbl: "车次", val: "9.21 抢票后填入" }
     ]},
     { kind: "hotel", tag: "住宿", pending: true, title: "D1 葛仙山镇民宿(独卫 2 间)", rows: [
       { lbl: "入住", val: "2026-10-01" },
@@ -1612,13 +1612,13 @@ const TRIP = {
   ],
   todo: [
     {
-      cat: "抢票", text: "9.16 抢 10.1 杭州 → 上饶 高铁(10:30 后)",
-      due: "2026-09-16T08:00+08:00", high: true, limited: true,
-      meta: "匹配行程 10:30 出发 · 杭州东早班 6 趟",
+      cat: "抢票", text: "9.17 抢 10.1 杭州 → 上饶 高铁(10:30 后)",
+      due: "2026-09-17T10:45+08:00", high: true, limited: true,
+      meta: "9.17 10:45 杭州东/西站起售 · 匹配行程 10:30 出发",
       detail: {
         type: "trains",
         title: "10.1 杭州 → 上饶 推荐车次(10:30 后)",
-        note: "按行程『10:30 出发、12:30 前抵达上饶』筛选,无需早起;出发站优先选杭州东(班次密)。",
+        note: "预售期 15 天(含当天):10.1 的票 9.17 10:45 开售(杭州、杭州东、杭州西站起售时间均为 10:45)。按行程『10:30 出发、12:30 前抵达上饶』筛选,无需早起;出发站优先选杭州东(班次密)。",
         trains: [
           { no: "G1377", from: "杭州东", dep: "10:31", arr: "12:10", dur: "1h43m", price: "二等 ¥156.5", tag: "完美" },
           { no: "G1501", from: "杭州东", dep: "11:03", arr: "12:45", dur: "1h47m", price: "二等 ¥169", tag: "稍晚到" },
@@ -1631,13 +1631,13 @@ const TRIP = {
       }
     },
     {
-      cat: "抢票", text: "9.18 抢 10.3 上饶 → 婺源 高铁(11:30 后)",
-      due: "2026-09-18T08:00+08:00", high: true, limited: true,
-      meta: "匹配行程 11:30 出发 · 上饶→婺源 23 分钟",
+      cat: "抢票", text: "9.19 抢 10.3 上饶 → 婺源 高铁(11:30 后)",
+      due: "2026-09-19T17:00+08:00", high: true, limited: true,
+      meta: "9.19 17:00 上饶站起售 · 上饶→婺源 23 分钟",
       detail: {
         type: "trains",
         title: "10.3 上饶 → 婺源 推荐车次(11:30 后)",
-        note: "按行程『11:30 出发、12:30 前抵达婺源』筛选;上饶到婺源每天近 30 趟,11:30 后还有 5 趟。",
+        note: "预售期 15 天(含当天):10.3 的票 9.19 17:00 开售(上饶站起售时间为 17:00,比杭州晚 6 个多小时,别按早上的时间等)。按行程『11:30 出发、12:30 前抵达婺源』筛选;上饶到婺源每天近 30 趟,11:30 后还有 5 趟。",
         trains: [
           { no: "G680",   from: "上饶", dep: "11:35", arr: "11:58", dur: "23m", price: "二等 ¥39.5", tag: "完美" },
           { no: "G3758",  from: "上饶", dep: "11:58", arr: "12:21", dur: "23m", price: "二等 ¥39.5", tag: "完美" },
@@ -1649,13 +1649,13 @@ const TRIP = {
       }
     },
     {
-      cat: "抢票", text: "9.19 抢 10.4 婺源 → 景德镇北 高铁(11:30 后)",
-      due: "2026-09-19T08:00+08:00", high: true, limited: true,
-      meta: "匹配行程 11:30 出发 · 行程仅 28 分钟",
+      cat: "抢票", text: "9.20 抢 10.4 婺源 → 景德镇北 高铁(11:30 后)",
+      due: "2026-09-20T17:30+08:00", high: true, limited: true,
+      meta: "9.20 17:30 婺源站起售 · 行程仅 28 分钟",
       detail: {
         type: "trains",
         title: "10.4 婺源 → 景德镇北 推荐车次(11:30 后)",
-        note: "按行程『11:30 出发、12:30 前抵达景德镇北』筛选;每天近 27 趟,11:30 后还有 5+ 趟。",
+        note: "预售期 15 天(含当天):10.4 的票 9.20 17:30 开售(婺源站起售时间为 17:30,是四段里最晚的)。按行程『11:30 出发、12:30 前抵达景德镇北』筛选;每天近 27 趟,11:30 后还有 5+ 趟。",
         trains: [
           { no: "C5109", from: "婺源", dep: "11:36", arr: "12:04", dur: "28m", price: "二等 ¥26", tag: "完美" },
           { no: "C5111", from: "婺源", dep: "11:50", arr: "12:18", dur: "28m", price: "二等 ¥26", tag: "完美" },
@@ -1667,13 +1667,13 @@ const TRIP = {
       }
     },
     {
-      cat: "抢票", text: "9.20 抢 10.5 景德镇北 → 杭州 高铁(15:00 后)",
-      due: "2026-09-20T08:00+08:00", high: true, limited: true,
-      meta: "匹配行程 15:00 出发 · 国庆末返程",
+      cat: "抢票", text: "9.21 抢 10.5 景德镇北 → 杭州 高铁(15:00 后)",
+      due: "2026-09-21T17:00+08:00", high: true, limited: true,
+      meta: "9.21 17:00 景德镇北站起售 · 国庆末返程",
       detail: {
         type: "trains",
         title: "10.5 景德镇北 → 杭州 推荐车次(15:00 后)",
-        note: "按行程『15:00 出发、17:00 前抵达杭州』筛选;下午班次较密,优先选 15-16 点出发的。",
+        note: "预售期 15 天(含当天):10.5 的票 9.21 17:00 开售(景德镇北站起售时间为 17:00)。按行程『15:00 出发、17:00 前抵达杭州』筛选;下午班次较密,优先选 15-16 点出发的。",
         trains: [
           { no: "G3380", from: "景德镇北", dep: "15:12", arr: "18:20", dur: "3h08m", price: "二等 ¥160", tag: "完美" },
           { no: "G902",  from: "景德镇北", dep: "16:24", arr: "18:27", dur: "2h03m", price: "二等 ¥177", tag: "理想" },
@@ -1940,8 +1940,8 @@ const TRIP = {
       }
     },
     {
-      cat: "兜底", text: "9.20 前同步看跨城专车价格(高铁没合适车次就转专车)",
-      due: "2026-09-20T20:00+08:00", high: true,
+      cat: "兜底", text: "9.21 晚四段票落定后核对跨城专车价格(高铁没合适车次就转专车)",
+      due: "2026-09-21T20:00+08:00", high: true,
       meta: "滴滴小程序『跨城专车』· 国庆涨价",
       detail: {
         type: "checklist",
@@ -2620,13 +2620,27 @@ function renderTodo() {
       const md = `${dt.getMonth()+1}.${dt.getDate()}`;
       const hm = `${pad2(dt.getHours())}:${pad2(dt.getMinutes())}`;
       // 剩余时间文案:一眼看出"还有几天"
+      // 按"自然日"相差天数计算,不能用 ceil(时长/86400000):
+      // 否则 9.19 17:00 距 9.14 16:50 只有 5 天,却会被算成"6 天后"
+      const nowD = new Date(now);
+      const dayDiff = Math.round(
+        (new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()) -
+         new Date(nowD.getFullYear(), nowD.getMonth(), nowD.getDate())) / 86400000
+      );
       let remain;
-      if (delta < -86400000) remain = `已逾期${Math.floor(-delta/86400000)}天`;
-      else if (delta < 0) remain = '今天已过';
-      else if (delta < 3600000) remain = `${Math.ceil(delta/60000)} 分钟后`;
-      else if (delta < 86400000) remain = `今天 ${Math.ceil(delta/3600000)} 小时内`;
-      else if (delta < 86400000 * 2) remain = '明天';
-      else remain = `${Math.ceil(delta/86400000)} 天后`;
+      if (delta < 0) {
+        remain = dayDiff < 0 ? `已逾期 ${-dayDiff} 天` : '今天已过';
+      } else if (delta < 3600000) {
+        remain = `${Math.ceil(delta / 60000)} 分钟后`;
+      } else if (dayDiff <= 0) {
+        remain = `今天 ${Math.ceil(delta / 3600000)} 小时内`;
+      } else if (dayDiff === 1) {
+        remain = '明天';
+      } else if (dayDiff === 2) {
+        remain = '后天';
+      } else {
+        remain = `${dayDiff} 天后`;
+      }
       // 配色优先级:
       //   1) 已逾期 → 一律红色(漏看的风险优先暴露,压过一切)
       //   2) 限时任务(limited:抢票/订房/抢预约等放票或房源有限) → 固定高亮,不随剩余天数降级
