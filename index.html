@@ -620,6 +620,14 @@
     font-weight: 600;
   }
   .st-val { flex: 1; color: var(--fg-soft); }
+  /* 大巴信息行:标签更长,单独放宽并加淡色底 */
+  .st-row-bus { gap: 10px; }
+  .st-row-bus .st-lbl.is-bus {
+    flex: 0 0 56px;
+    color: #b45309;
+    font-weight: 600;
+  }
+  [data-theme="dark"] .st-row-bus .st-lbl.is-bus { color: #fbbf24; }
 
   .day-route-toggle {
     display: block;
@@ -771,6 +779,84 @@
     font-weight: 600;
     color: var(--fg);
   }
+  /* 逐日行程:日期抬头右侧的天气 */
+  .day-head { position: relative; }
+  .day-wx {
+    margin-left: auto;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 18px;
+    line-height: 1.25;
+  }
+  .day-wx .wx-t {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .day-wx .wx-d {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .day-wx.is-rain .wx-d { color: #3b82f6; }
+  .day-wx.is-warn .wx-d { color: #d97706; }
+  [data-theme="dark"] .day-wx.is-rain .wx-d { color: #93c5fd; }
+  [data-theme="dark"] .day-wx.is-warn .wx-d { color: #fbbf24; }
+
+  /* 逐日行程:当天演艺时间表 */
+  .show-box {
+    margin: 12px 16px 4px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--card-soft);
+    border: 1px solid var(--border);
+    border-left: 4px solid #a06cd5;
+  }
+  .show-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 7px;
+  }
+  .show-title { font-size: 13px; font-weight: 700; color: var(--fg); }
+  .show-src {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .show-rows { display: grid; gap: 4px; }
+  .show-row {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.55;
+    align-items: baseline;
+  }
+  .show-time {
+    flex: 0 0 82px;
+    font-weight: 700;
+    color: #7c3aed;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .show-name { flex: 1; color: var(--fg-soft); }
+  .show-name b { color: var(--fg); font-weight: 600; }
+  .show-row.is-hi .show-name { color: var(--fg); }
+  .show-row.is-hi .show-time { color: #b91c1c; }
+  .show-note {
+    margin-top: 7px;
+    padding-top: 7px;
+    border-top: 1px dashed var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  [data-theme="dark"] .show-time { color: #c4b5fd; }
+  [data-theme="dark"] .show-row.is-hi .show-time { color: #fca5a5; }
+
   .badge {
     display: inline-block;
     font-size: 10px;
@@ -1154,15 +1240,74 @@
   }
   .booking-list li span { color: var(--fg); }
   .tips {
+    display: grid;
+    gap: 10px;
+  }
+  .tip-group {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 16px;
     box-shadow: var(--shadow);
+    overflow: hidden;
   }
-  .tips p { margin: 0 0 8px; font-size: 13px; color: var(--fg-soft); line-height: 1.6; }
-  .tips p:last-child { margin-bottom: 0; }
-  .tips strong { color: var(--fg); font-weight: 600; }
+  .tip-group > summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 14px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--fg);
+  }
+  .tip-group > summary::-webkit-details-marker { display: none; }
+  .tip-group > summary::before {
+    content: "";
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .tip-group > summary .tg-n {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+  .tip-group > summary .tg-chev {
+    font-size: 12px;
+    color: var(--muted);
+    transition: transform .2s ease;
+  }
+  .tip-group[open] > summary .tg-chev { transform: rotate(90deg); }
+  .tip-group[open] > summary { border-bottom: 1px solid var(--border-soft); }
+  .tip-body { padding: 10px 14px 12px; display: grid; gap: 9px; }
+  .tip-body p {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--fg-soft);
+    line-height: 1.65;
+    padding-left: 11px;
+    position: relative;
+  }
+  .tip-body p::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .tip-body strong { color: var(--fg); font-weight: 600; }
 
   footer {
     max-width: var(--maxw);
@@ -1274,7 +1419,24 @@ const TRIP = {
       weekday: "周四",
       label: "Day 1",
       route: "杭州 → 上饶 → 葛仙村",
+      weather: { hi: 27, lo: 20, d: "小雨", rain: true, tip: "山区更凉,带雨衣" },
       color: "#f5b700",
+      shows: {
+        title: "葛仙村『千灯会』当日演出(国庆版 9.25–10.7)",
+        src: "景区国庆公告 + 2026 演出时刻",
+        rows: [
+          { t: "18:30", n: "灵宝仙街 <b>千灯巡游</b>:从众妙阁出发,提灯队伍沿仙街行进", hi: true },
+          { t: "19:00", n: "全域灯笼亮灯 + 雾森开启,古街进入夜景模式" },
+          { t: "19:30", n: "<b>众妙阁 3D 激光灯光秀</b>", hi: true },
+          { t: "19:45", n: "<b>水幕电影《归真纪》</b>:紧接灯光秀,真人飞天+喷火+音乐喷泉,免费" },
+          { t: "20:10", n: "星辰广场·非遗火焰节:火虎 / 火壶 / 火凤凰绝技" },
+          { t: "20:30", n: "星辰音乐会(live 演出,凭门票免费入场)" },
+          { t: "21:10", n: "星辰广场·全民篝火晚会(可自由参与)" },
+          { t: "21:15", n: "<b>星辰广场烟花秀 + 孔明灯放飞</b>(国庆加场)", hi: true },
+          { t: "22:00", n: "全域灯光逐步关闭,夜游结束" }
+        ],
+        note: "① 灯光秀与水幕电影几乎无空档,建议在众妙阁一次性看完,别中途换位;② 景区周一设备维护常规停演(本次为 10.1 周四,正常);③ 国庆场次加码,以景区当日公告为准。"
+      },
       stay: {
         name: "上饶鑫邦大酒店",
         booked: true,
@@ -1283,7 +1445,14 @@ const TRIP = {
         checkout: "10.2 12:00 前退房",
         room: "高级双床房 × 2 间 · 含双早",
         perks: "葛仙村门票 4 张(每间各赠双人) + 酒店↔葛仙村大巴往返 + 健身房 + 免费停车",
-        note: "共订 2 间,门票随房赠送,入住时前台核销;预约成功后不支持取消或修改"
+        note: "共订 2 间,门票随房赠送,入住时前台核销;预约成功后不支持取消或修改",
+        bus: "酒店↔葛仙村往返大巴(已预留 4 个座位)",
+        busRows: [
+          ["大巴座位", "已预留 4 个"],
+          ["去程发车", "15:00 · 上饶鑫邦大酒店 → 葛仙村景区"],
+          ["回程发车", "22:00 · 葛仙村景区 → 上饶鑫邦大酒店"],
+          ["车券", "办理入住时到前台领取,凭券上车"]
+        ]
       },
       events: [
         {
@@ -1309,10 +1478,10 @@ const TRIP = {
           latDest: 28.4428, lngDest: 117.9323
         },
         {
-          start: "2026-10-01T13:40:00+08:00",
-          end:   "2026-10-01T14:40:00+08:00",
-          title: "酒店 → 葛仙村度假区",
-          desc: "酒店套餐含往返大巴接送,车程约 1 小时;发车班次以酒店为准,需提前预约座位",
+          start: "2026-10-01T14:20:00+08:00",
+          end:   "2026-10-01T15:00:00+08:00",
+          title: "酒店集合 → 15:00 大巴发车去葛仙村",
+          desc: "酒店已预留 4 个座位,大巴 15:00 从酒店发车(车程约 1 小时);办理入住时记得领大巴车券,凭券上车",
           transport: "酒店大巴",
           place: "葛仙村度假区",
           lat: 28.1278, lng: 117.6733
@@ -1330,16 +1499,16 @@ const TRIP = {
           start: "2026-10-01T18:30:00+08:00",
           end:   "2026-10-01T21:00:00+08:00",
           title: "众妙阁灯光秀 + 花灯夜景",
-          desc: "灯光秀通常 19:30 / 20:00 各一场;提前和酒店确认返程大巴发车时刻",
+          desc: "众妙阁 19:30 激光灯光秀,19:45 紧接水幕电影《归真纪》;返程大巴 22:00 从景区发车,别错过末班",
           transport: "步行",
           place: "众妙阁",
           lat: 28.1282, lng: 117.6741
         },
         {
-          start: "2026-10-01T21:00:00+08:00",
-          end:   "2026-10-01T22:00:00+08:00",
-          title: "酒店大巴接回 → 上饶鑫邦大酒店休息",
-          desc: "跟酒店大巴回市区(约 1 小时),当天不再转场",
+          start: "2026-10-01T22:00:00+08:00",
+          end:   "2026-10-01T23:00:00+08:00",
+          title: "22:00 大巴发车回酒店 → 休息",
+          desc: "返程大巴 22:00 从景区发车(约 1 小时回市区),凭车券上车;夜景结束后别在景区久留,21:50 前到上车点",
           transport: "酒店大巴",
           place: "葛仙村度假区",
           lat: 28.1278, lng: 117.6733
@@ -1351,8 +1520,21 @@ const TRIP = {
       date: "2026-10-02",
       weekday: "周五",
       label: "Day 2",
+      weather: { hi: 24, lo: 19, d: "阴有小雨", rain: true, tip: "山上风大,防滑鞋" },
       route: "上饶市区 ⇄ 铜钹山",
       color: "#f08a24",
+      shows: {
+        title: "铜钹山『鹊桥谷·封禁江湖行』沉浸式实景演艺(国庆场)",
+        src: "景区国庆公告",
+        rows: [
+          { t: "上午", n: "侠客迎宾 + 古街巡游(具体场次以景区当日公示为准)" },
+          { t: "下午", n: "<b>官兵驱黄·颁令封山</b>(定情门):实景复刻千年封禁诏令,场面最恢弘", hi: true },
+          { t: "下午", n: "封山乱世·趣味互动(鹊桥谷古街):NPC 问答 + 古风小游戏,零门槛参与" },
+          { t: "下午", n: "杨氏聚义·守护鹊桥(宴尔堂):集体盟誓,领专属聚义令牌" },
+          { t: "全天", n: "黄巢兵至·攻防互动(定情门前):可持道具参与攻城,小孩也爱玩" }
+        ],
+        note: "① 参与互动可攒『江湖银票』,在鹊桥谷文创店换纪念周边;② 九仙湖另有网红山道滑车、山林射箭,不赶时间可加;③ 场次随日期浮动,进园先看当日公告牌。"
+      },
       stay: {
         name: "上饶鑫邦大酒店(连住)",
         booked: true,
@@ -1427,7 +1609,29 @@ const TRIP = {
       weekday: "周六",
       label: "Day 3",
       route: "上饶 → 婺源 · 婺女洲全天",
+      weather: { hi: 24, lo: 19, d: "阴有雨", rain: true, warn: "夜间演出可能受影响" },
       color: "#7fb069",
+      shows: {
+        title: "婺女洲当日演出(中秋国庆官方时间表 9.25–10.6)",
+        src: "婺女洲官方国庆演出表",
+        rows: [
+          { t: "17:00", n: "《疯狂的2066》赛博大秀(演艺剧场)" },
+          { t: "17:20", n: "晒秋巡游(鱼纹舞台 → 晒秋台)" },
+          { t: "18:30", n: "傩舞巡游(鱼纹 → 金庸 → 抱玉塔)" },
+          { t: "19:15", n: "飞天宫灯 第1场(抱玉塔广场;当天共 3 场)" },
+          { t: "19:30", n: "<b>非遗打铁花 第1场</b>(金阁水上舞台)", hi: true },
+          { t: "19:36", n: "<b>金阁烟花秀</b>(10.1–10.6 加场)", hi: true },
+          { t: "20:15", n: "飞天宫灯 第2场(抱玉塔广场)" },
+          { t: "20:30", n: "<b>非遗打铁花 第2场</b>(国庆加场)", hi: true },
+          { t: "20:30", n: "<b>《遇见·婺源》实景演出</b>(演艺剧场,需另购票 · 可选)", hi: true },
+          { t: "20:40", n: "鱼灯巡游(财神庙 → 抱玉塔 → 万贯广场)" },
+          { t: "21:00", n: "徽州嘉年华(万贯广场)" },
+          { t: "21:35", n: "飞天宫灯 第3场(抱玉塔广场)" },
+          { t: "21:50", n: "<b>非遗打铁花 第3场</b>(国庆加场,人最少,最推荐)", hi: true },
+          { t: "22:20", n: "<b>抱玉塔烟花秀</b>(收尾)", hi: true }
+        ],
+        note: "① 打铁花国庆 3 场(19:30 / 20:30 / 21:50),21:50 那场人最少最好拍;最佳机位在抱玉塔临湖栏杆(塔+铁花同框),提前 20 分钟占位;② 打铁花在 <b>金阁水上舞台</b>,别站错边;③ 雨天演出照常不设停演,但遇雷电大风时打铁花/火壶可能延迟或换场地;④ 《遇见·婺源》20:30 开演、需另购票,属可选加项;⑤ 以景区当日公告为准。"
+      },
       stay: {
         name: "婺女洲度假区故园里酒店",
         booked: true,
@@ -1557,7 +1761,8 @@ const TRIP = {
       date: "2026-10-04",
       weekday: "周日",
       label: "Day 4",
-      route: "婺女洲 → 景德镇 · 博物馆日",
+      route: "婺女洲 → 景德镇 · 陶溪川逛吃日",
+      weather: { hi: 25, lo: 17, d: "阴转多云", tip: "雨停,最舒服的一天" },
       color: "#4a90d9",
       stay: {
         name: "行川里酒店(中国陶瓷博物馆店)",
@@ -1567,7 +1772,7 @@ const TRIP = {
         checkout: "10.5 12:00 前退房",
         room: "陶阳里|高级舒适双床房 × 1 间 · 无早(35-45㎡ · 可住 4 人)",
         perks: "陶艺体验 DIY + 精美陶瓷手串 1 串 + 免费停车 + Wi-Fi",
-        note: "窗户较小 · 禁烟 · 无有线宽带;距中国陶瓷博物馆约 1km(步行 15 分钟)"
+        note: "窗户较小 · 禁烟 · 无有线宽带;近中国陶瓷博物馆/中气食族,距陶溪川 6.3km(打车 15 分钟)"
       },
       events: [
         {
@@ -1592,47 +1797,83 @@ const TRIP = {
         },
         {
           start: "2026-10-04T12:04:00+08:00",
-          end:   "2026-10-04T13:30:00+08:00",
-          title: "景德镇北 → 行川里酒店 / 午饭 / 办入住",
-          desc: "打车约 25 分钟;行李先放酒店,附近觅食(牛骨粉、冷粉、饺子粑)",
+          end:   "2026-10-04T13:00:00+08:00",
+          title: "景德镇北 → 行川里酒店 / 放行李 / 办入住",
+          desc: "打车约 25 分钟(8.5km);先放行李,14:00 前到也能先寄存",
           transport: "打车",
           place: "行川里酒店(中国陶瓷博物馆店)",
           lat: 29.2986, lng: 117.1836
         },
         {
-          start: "2026-10-04T13:30:00+08:00",
-          end:   "2026-10-04T16:00:00+08:00",
-          title: "中国陶瓷博物馆",
-          desc: "离酒店约 1km,步行 15 分钟 / 骑行 5 分钟;必须提前预约,免费,无现场票(10.4 周日正常开放)",
-          transport: "步行/骑行",
-          place: "中国陶瓷博物馆",
+          start: "2026-10-04T13:00:00+08:00",
+          end:   "2026-10-04T13:40:00+08:00",
+          title: "午饭:酒店旁觅食",
+          desc: "酒店周边就是博物馆商圈,牛骨粉、冷粉、饺子粑都在这片;别急着跑远",
+          transport: "步行",
+          place: "行川里酒店周边",
+          lat: 29.2986, lng: 117.1836
+        },
+        {
+          start: "2026-10-04T13:40:00+08:00",
+          end:   "2026-10-04T14:10:00+08:00",
+          title: "中气食族·中医冰淇淋(中国陶瓷博物馆店)",
+          desc: "就在酒店/博物馆商圈『景博驿站』一层,吃完午饭顺路。中药入冰淇淋的猎奇体验,当甜品打卡,10 分钟搞定",
+          transport: "步行",
+          place: "中气食族(景博驿站店)",
           lat: 29.2931, lng: 117.1758,
-          needsBooking: true,
-          bookingNote: "微信『景德镇中国陶瓷博物馆』公众号 / 小程序『畅游景德镇』提前 1-7 天约"
+          optional: true
         },
         {
-          start: "2026-10-04T16:00:00+08:00",
-          end:   "2026-10-04T19:00:00+08:00",
-          title: "陶阳里·御窑博物馆",
-          desc: "红砖建筑 + 日落 + 夜景,拍照出片",
-          transport: "市内打车",
-          place: "陶阳里·御窑博物馆",
-          lat: 29.2996, lng: 117.2105
+          start: "2026-10-04T14:10:00+08:00",
+          end:   "2026-10-04T14:50:00+08:00",
+          title: "行川里酒店 → 雕塑瓷厂",
+          desc: "打车约 8km / 20 分钟。注意:乐天市集只在周六上午,10.4 是周日,逛厂区店铺 + 巷子小店",
+          transport: "打车",
+          place: "雕塑瓷厂",
+          lat: 29.3025, lng: 117.2255
         },
         {
-          start: "2026-10-04T19:00:00+08:00",
-          end:   "2026-10-04T21:00:00+08:00",
-          title: "陶溪川文创夜市",
-          desc: "红砖厂房夜景,淘瓷器小物件",
-          transport: "市内打车",
+          start: "2026-10-04T14:50:00+08:00",
+          end:   "2026-10-04T17:30:00+08:00",
+          title: "雕塑瓷厂:巷子里淘瓷 / 拍照",
+          desc: "主街小物件偏重复,拐进小巷才是盲盒。10 元四五串的手串、20 元上下的日常器皿,大多百元内。想体验捏泥巴可现场找工作室(约 1-2h,做完要烧制+邮寄)",
+          transport: "步行",
+          place: "雕塑瓷厂",
+          lat: 29.3025, lng: 117.2255
+        },
+        {
+          start: "2026-10-04T17:30:00+08:00",
+          end:   "2026-10-04T18:40:00+08:00",
+          title: "晚饭:乐乐大排档",
+          desc: "景德镇本地人常去的老牌大排档,招牌糯辣鸡爪、牛腩泡麵、辣椒皮蛋。国庆饭点排队,17:30 前到或先取号",
+          transport: "步行/打车",
+          place: "乐乐大排档",
+          lat: 29.3030, lng: 117.2200
+        },
+        {
+          start: "2026-10-04T18:40:00+08:00",
+          end:   "2026-10-04T21:30:00+08:00",
+          title: "陶溪川文创街区 + 夜市",
+          desc: "老国营瓷厂改造,红砖厂房。⚠️ 热闹的是夜市大厂区那块,不是路边亮招牌的小门脸。原创手作瓷器摊位多,价格多在 300 元上下,值得慢慢淘;白天没意义,夜景和夜市才是重点",
+          transport: "步行",
           place: "陶溪川",
           lat: 29.2955, lng: 117.2196
         },
         {
-          start: "2026-10-04T21:00:00+08:00",
-          end:   "2026-10-04T22:00:00+08:00",
+          start: "2026-10-04T21:30:00+08:00",
+          end:   "2026-10-04T22:10:00+08:00",
+          title: "夜宵:味烧烤 / 回酒店",
+          desc: "味烧烤是本地炭火烤串的夜宵首选,和乐乐大排档风格不同;吃不下就直接回酒店(陶溪川距酒店约 6.3km,打车 15 分钟)",
+          transport: "打车",
+          place: "味烧烤",
+          lat: 29.2950, lng: 117.2180,
+          optional: true
+        },
+        {
+          start: "2026-10-04T22:10:00+08:00",
+          end:   "2026-10-04T22:30:00+08:00",
           title: "回行川里酒店",
-          desc: "陶溪川距酒店约 6km,打车 15 分钟",
+          desc: "陶溪川距酒店约 6.3km,打车 15 分钟",
           transport: "打车",
           place: "行川里酒店(中国陶瓷博物馆店)",
           lat: 29.2986, lng: 117.1836
@@ -1645,6 +1886,7 @@ const TRIP = {
       weekday: "周一",
       label: "Day 5",
       route: "景德镇 → 返程杭州",
+      weather: { hi: 24, lo: 13, d: "多云转晴", warn: "昼夜温差 11℃" },
       color: "#a06cd5",
       stay: null,
       events: [
@@ -1652,7 +1894,7 @@ const TRIP = {
           start: "2026-10-05T10:30:00+08:00",
           end:   "2026-10-05T12:00:00+08:00",
           title: "起床 / 退房寄存行李 / 慢悠悠早餐",
-          desc: "酒店无早:12:00 前退房后行李寄前台,再去附近/抚州弄吃早点(油条包麻糍、冷粉)",
+          desc: "酒店无早:12:00 前退房后行李寄前台,再去抚州弄吃早点(油条包麻糍、冷粉、饺子粑)",
           transport: "步行/打车",
           place: "抚州弄",
           lat: 29.2950, lng: 117.2090
@@ -1750,10 +1992,10 @@ const TRIP = {
       { lbl: "位置", val: "距中国陶瓷博物馆约 1km(步行 15 分钟);陶阳里 2.2km,陶溪川 6.3km" },
       { lbl: "注意", val: "窗户较小 · 禁烟 · 无有线宽带;无早,早饭到外面吃" }
     ]},
-    { kind: "ticket", tag: "门票", pending: true, title: "中国陶瓷博物馆(免费·必预约)", rows: [
-      { lbl: "日期", val: "2026-10-04 下午" },
-      { lbl: "入口", val: "微信公众号『景德镇中国陶瓷博物馆』或小程序『畅游景德镇』" },
-      { lbl: "窗口", val: "提前 1-7 天开放预约,9.27 抢 13:30 场" }
+    { kind: "ticket", tag: "门票", title: "中国陶瓷博物馆(本次不去)", rows: [
+      { lbl: "状态", val: "国庆预约已满,抢不到票,本次取消" },
+      { lbl: "改为", val: "陶溪川 / 雕塑瓷厂 / 乐乐大排档 / 味烧烤 / 中气食族 逛吃一日" },
+      { lbl: "备选", val: "若临时想去,提前 1-7 天在公众号或『畅游景德镇』小程序抢票" }
     ]},
     { kind: "ticket", tag: "门票", title: "葛仙村门票(已含在住宿内)", rows: [
       { lbl: "张数", val: "4 张(上饶鑫邦大酒店 2 间房各赠双人)" },
@@ -1845,19 +2087,20 @@ const TRIP = {
       }
     },
     {
-      cat: "门票", text: "9.27 早上抢中国陶瓷博物馆预约(10.4 下午场)",
-      due: "2026-09-27T07:30+08:00", high: true, limited: true,
-      meta: "免费但无现场票 · 9.27 抢 7 天后",
+      cat: "门票", text: "景德镇博物馆已取消,改『逛吃一日』(点位已定,无需预约)",
+      due: "2026-09-28T20:00+08:00",
+      meta: "陶溪川 / 雕塑瓷厂 / 乐乐大排档 / 味烧烤 / 中气食族",
       detail: {
         type: "checklist",
-        title: "中国陶瓷博物馆预约",
+        title: "景德镇 D4 逛吃安排(全部无需预约)",
         items: [
-          "微信搜『景德镇中国陶瓷博物馆』公众号或小程序『畅游景德镇』,在线预约",
-          "选 10.4(周日,正常开放)下午场",
-          "4 人分别预约同一时段(可在同一订单备注同行人)",
-          "9.27 07:30 准时进,10:00 后名额通常释放"
+          "中气食族·中医冰淇淋(景博驿站店):就在酒店所在商圈一层,午饭后顺路 30 分钟打卡",
+          "雕塑瓷厂:巷子里淘瓷 + 拍照;乐天创意市集<b>仅周六</b>开,10.4 是周日集市不开,但厂区店铺照常",
+          "乐乐大排档(晚饭):本地老牌,招牌糯辣鸡爪、牛腩泡麵;国庆饭点排队,17:30 前到或先取号",
+          "陶溪川文创街区 + 夜市:18:40-21:30,热闹的是大厂区",
+          "味烧烤(夜宵 / 可选):陶溪川周边,逛累了再吃"
         ],
-        tip: "免费但需提前 7 天开放预约,国庆节票紧俏,建议 9.27 一早就进小程序。"
+        tip: "五个点位都不需要提前预约,唯一要注意的是乐乐大排档国庆排队,早点去或先取号;乐天市集 10.4 确定不开,别白跑。"
       }
     },
     {
@@ -1945,20 +2188,55 @@ const TRIP = {
     },
   ],
   tips: [
-    "<strong>高铁出票</strong>:10.3 上饶→婺源 G3758(11:58→12:21)、10.4 婺源→景德镇北 C5109(11:36→12:04)已出票;10.1 与 10.5 两段已开售,尽快购票。4 段都支持刷二维码检票,车票当日当次有效,别搭错班次。",
-    "<strong>酒店大巴</strong>:D1 上饶鑫邦大酒店套餐含『酒店↔葛仙村大巴往返接送』,发车有固定班次,订好后务必电话确认时刻并预约座位,夜场回程别错过末班。",
-    "<strong>门票已含</strong>:葛仙村门票含在 D1/D2 住宿套餐内、婺女洲大门票含在 D3 故园里酒店,各 2 间房共 4 张,两处都不用再买门票(婺女洲园内打铁花/烟花等演艺同样免费看)。",
-    "<strong>连住并房</strong>:D1/D2 是同一家酒店的两笔订单(各 2 间),10.2 中午退房时请前台把两晚合并到同一间房,行李就不用搬。",
-    "<strong>博物馆预约</strong>:中国陶瓷博物馆免费但无现场票,微信『景德镇中国陶瓷博物馆』公众号或小程序『畅游景德镇』提前 1-7 天约,9.27 早上抢。",
-    "<strong>景德镇住宿</strong>:10.4 住行川里酒店(中国陶瓷博物馆店,2025 年开业的奶油风独栋),距中国陶瓷博物馆约 1km、步行 15 分钟,房内含陶艺体验 DIY + 陶瓷手串;无早餐,早点到外面吃,10.5 退房后可免费寄存行李。",
-    "<strong>婺女洲住景区内</strong>:10.3 住故园里酒店(景区内),2 间房共赠 4 张景区大门票、入住起 2 日内无限次进出、园内接驳车免费;夜场看完打铁花/烟花步行回房,散场不用排队打车。",
-    "<strong>婺女洲夜场</strong>:打铁花每晚 3 场(19:20 / 20:30 / 21:40,五显湖),鱼灯巡游、灯火盛典、烟花秀 21:50 收尾,均含在门票内;《遇见·婺源》实景演出 20:20 开演、需另购票,属可选加项(不看就继续夜游)。具体以景区当日公告为准。",
-    "<strong>国庆人流</strong>:葛仙村入口、婺女洲夜场常排队;婺女洲住景区内可错峰,日场 10:00-16:00 相对人少。",
-    "<strong>铜钹山时段</strong>:10 月起按冬季营业时段(约 08:30-16:30、16:00 停票),行程按 16:00 前入园安排;园内靠观光车接驳,九仙湖游船可选。",
-    "<strong>博物馆闭馆</strong>:10.5 是周一,如临时想加博物馆行程先查开放公告(国庆法定节假日通常开)。",
-    "<strong>返程缓冲</strong>:10.5 Day 5 是缓冲日,三宝村/抚州弄随体力取舍,15:00 高铁不要冒险。",
-    "<strong>跨城打车</strong>:酒店到景区、市区到铜钹山打车都按 1-1.5h 预留(等车 + 路途),不要卡点叫车。",
-    "<strong>支付</strong>:景德镇夜市 / 婺源小店部分只收现金或微信,备 500 元现金。"
+    {
+      g: "交通出行",
+      items: [
+        "<strong>高铁车票</strong>:10.3 上饶→婺源 G3758(11:58→12:21)、10.4 婺源→景德镇北 C5109(11:36→12:04)已出票;10.1(杭州→上饶)与 10.5(景德镇北→杭州)两段已开售,尽快买。四段全部支持刷码检票,车票当日当次有效,别搭错班次。",
+        "<strong>酒店大巴(D1)</strong>:上饶鑫邦大酒店已预留 <b>4 个座位</b>;去程 <b>15:00 从酒店发车</b>,回程 <b>22:00 从葛仙村景区发车</b>。办理入住时到前台<b>领取大巴车券,凭券上车</b>,回程 21:50 前到上车点。",
+        "<strong>跨城打车</strong>:酒店到景区、市区到铜钹山,都按 1–1.5 小时预留(等车 + 路途),不要卡点叫车。",
+        "<strong>返程缓冲</strong>:10.5 是缓冲日,三宝村/抚州弄随体力取舍,15:00 高铁不要冒险。"
+      ]
+    },
+    {
+      g: "门票与住宿",
+      items: [
+        "<strong>门票已含</strong>:葛仙村门票含在 D1/D2 住宿套餐内、婺女洲大门票含在 D3 故园里酒店,各 2 间房共 4 张,两处都不用再买门票(园内打铁花/烟花等演艺同样免费看)。",
+        "<strong>连住并房</strong>:D1/D2 是同一家酒店的两笔订单(各 2 间),10.2 中午退房时请前台把两晚合并到同一间房,行李就不用搬。",
+        "<strong>婺女洲住景区内</strong>:10.3 住故园里酒店(景区内),2 间房共赠 4 张大门票、入住起 2 日内无限次进出、园内接驳车免费;夜场看完打铁花/烟花步行回房,散场不用排队打车。",
+        "<strong>景德镇住宿</strong>:10.4 住行川里酒店(中国陶瓷博物馆店,2025 年开业奶油风独栋),距陶溪川约 6.3km(打车 15 分钟);房内含陶艺 DIY + 陶瓷手串;无早餐,早点到外面吃;10.5 退房后可免费寄存行李。",
+        "<strong>景德镇博物馆取消</strong>:中国陶瓷博物馆免费但无现场票、国庆极难约,本次已改为『逛街 + 吃』(陶溪川 / 雕塑瓷厂 / 乐乐大排档 / 味烧烤 / 中气食族)。若临时想去,仍需提前 1–7 天在公众号或『畅游景德镇』小程序抢。",
+        "<strong>博物馆闭馆</strong>:10.5 是周一,若临时加博物馆行程先查开放公告(国庆法定节假日通常开)。"
+      ]
+    },
+    {
+      g: "天气与穿着",
+      items: [
+        "<strong>国庆天气总览</strong>:10.1–10.4 有两股冷空气南下,赣东北多阴雨,最高温仅 24–27℃,上饶一带较常年骤降 10℃以上;10.4 自北向南雨停转多云,10.5 转晴好。",
+        "<strong>逐日提醒</strong>:10.1 小雨 20–27℃(山区更凉,带雨衣);10.2 阴有小雨 19–24℃(铜钹山风大,穿防滑鞋);10.3 阴有雨 19–24℃(<b>夜间打铁花/烟花可能受影响</b>);10.4 阴转多云 17–25℃(雨停,最舒服的一天);10.5 多云转晴 13–24℃(昼夜温差 11℃)。",
+        "<strong>穿什么</strong>:白天短袖 + 薄外套即可,但<b>早晚必须加冲锋衣/抓绒</b>,10.5 早晨山区体感可低至 10℃ 左右;备一次性雨衣(景区风大,伞不好用)、防滑防水鞋。",
+        "<strong>山区与夜里</strong>:葛仙村、铜钹山、婺女洲夜场都在水边/山上,体感比市区低 3–5℃,看夜场演出务必穿长裤 + 外套,带条薄围巾。"
+      ]
+    },
+    {
+      g: "景点与演艺",
+      items: [
+        "<strong>葛仙村夜场(D1)</strong>:19:30 众妙阁 3D 激光灯光秀 → 19:45 水幕电影《归真纪》,两场几乎无空档,建议在众妙阁一次性看完;21:15 星辰广场烟花秀 + 孔明灯(国庆加场)。",
+        "<strong>婺女洲夜场(D3)</strong>:打铁花国庆 <b>3 场</b>(19:30 / 20:30 / <b>21:50</b>),21:50 那场人最少最好拍;最佳机位在抱玉塔临湖栏杆(塔 + 铁花同框),提前 20 分钟占位。打铁花在<b>金阁水上舞台</b>,别站错边。",
+        "<strong>《遇见·婺源》</strong>:20:30 开演、需另购票,属可选加项,不看就继续夜游。",
+        "<strong>铜钹山时段</strong>:10 月起按冬季营业时间(约 08:30–16:30、16:00 停票),行程按 16:00 前入园安排;园内靠观光车接驳,九仙湖游船可选;『封禁江湖行』互动演出可参与攒银票换周边。",
+        "<strong>国庆人流</strong>:葛仙村入口、婺女洲夜场常排队;婺女洲住景区内可错峰,D3 日场 10:00–16:00 相对人少。",
+        "<strong>演出以当日公告为准</strong>:景区国庆加场/停演会临时调整,雨天打铁花、火壶类演出遇雷电大风可能延迟或换场地,进园先看公告牌。"
+      ]
+    },
+    {
+      g: "吃饭与支付",
+      items: [
+        "<strong>景德镇逛吃路线(D4)</strong>:雕塑瓷厂(淘瓷拍照)→ 乐乐大排档(晚饭)→ 陶溪川文创街区 + 夜市 → 味烧烤(夜宵);中气食族中医冰淇淋就在酒店所在商圈,午饭后顺路打卡即可,不用单独跑(门店 10:00–22:00)。",
+        "<strong>乐天市集提醒</strong>:雕塑瓷厂的乐天创意市集<b>只在周六</b>举办,10.4 是周日,集市不开,但厂区店铺、工作室、地摊照常逛。",
+        "<strong>现金备一点</strong>:景德镇夜市 / 婺源小店部分只收现金或微信,备 500 元现金。",
+        "<strong>景德镇口味</strong>:本地菜偏辣,乐乐大排档、味烧烤都是重口烧烤/小炒,不嗜辣记得提前说『不要辣 / 微辣』。"
+      ]
+    }
   ]
 };
 
@@ -2146,8 +2424,13 @@ function renderDays() {
       s.room     ? { l: '房型', v: s.room }     : null,
       s.perks    ? { l: '含',   v: s.perks }    : null,
       s.address  ? { l: '地址', v: s.address }  : null,
+      s.bus      ? { l: '大巴', v: s.bus }      : null,
       s.note     ? { l: '注意', v: s.note }     : null
-    ].filter(Boolean).map(r => `<div class="st-row"><span class="st-lbl">${r.l}</span><span class="st-val">${r.v}</span></div>`).join('') : '';
+    ].concat(s.busRows || []).filter(Boolean)
+      .map(r => Array.isArray(r)
+        ? `<div class="st-row st-row-bus"><span class="st-lbl is-bus">${r[0]}</span><span class="st-val">${r[1]}</span></div>`
+        : `<div class="st-row"><span class="st-lbl">${r.l}</span><span class="st-val">${r.v}</span></div>`
+      ).join('') : '';
     const stayBlock = s ? `
         <div class="stay-box ${s.booked ? 'is-booked' : ''}">
           <div class="stay-box-head">
@@ -2156,6 +2439,30 @@ function renderDays() {
           </div>
           <div class="stay-box-rows">${stayRows}</div>
         </div>` : '';
+
+    // 日期抬头右侧的天气胶囊
+    const w = d.weather;
+    const wxCls = w ? [w.rain ? 'is-rain' : '', w.warn ? 'is-warn' : ''].filter(Boolean).join(' ') : '';
+    const wxBlock = w ? `
+          <span class="day-wx ${wxCls}">
+            <span class="wx-t">${w.lo}~${w.hi}°</span>
+            <span class="wx-d">${w.d}</span>
+          </span>` : '';
+
+    // 当天演艺时间表
+    const sh = d.shows;
+    const showBlock = sh ? `
+        <div class="show-box">
+          <div class="show-head">
+            <span class="show-title">🎭 ${sh.title}</span>
+            ${sh.src ? `<span class="show-src">${sh.src}</span>` : ''}
+          </div>
+          <div class="show-rows">
+            ${sh.rows.map(r => `<div class="show-row ${r.hi ? 'is-hi' : ''}"><span class="show-time">${r.t}</span><span class="show-name">${r.n}</span></div>`).join('')}
+          </div>
+          ${sh.note ? `<div class="show-note">${sh.note}</div>` : ''}
+        </div>` : '';
+
     return `
     <details class="day-block" ${i===0?'open':''} id="day-${d.id}">
       <summary class="day-head">
@@ -2164,10 +2471,12 @@ function renderDays() {
           <div class="date">10.${i+1} · ${d.weekday} · ${d.label}</div>
           <div class="title">${d.route}</div>
         </div>
+        ${wxBlock}
         <span class="chevron">›</span>
       </summary>
       <div class="day-body">
         ${stayBlock}
+        ${showBlock}
         <button class="day-route-toggle" data-route-toggle="${d.id}">查看当日路线</button>
         <div class="day-route-svg" data-route-svg="${d.id}" hidden></div>
         <a class="day-nav-btn" data-daynav="${d.id}" href="#" onclick="event.preventDefault();">一键规划全天路线(高德)</a>
@@ -2785,7 +3094,11 @@ function escapeHtml(s) {
 }
 function escapeAttr(s) { return escapeHtml(s).replace(/\s+/g, '-'); }
 function renderTips() {
-  $("#tips").innerHTML = TRIP.tips.map(t => `<p>· ${t}</p>`).join('');
+  $("#tips").innerHTML = TRIP.tips.map((g, i) => `
+    <details class="tip-group" ${i === 0 ? 'open' : ''}>
+      <summary>${g.g}<span class="tg-n">${g.items.length}</span><span class="tg-chev">›</span></summary>
+      <div class="tip-body">${g.items.map(t => `<p>${t}</p>`).join('')}</div>
+    </details>`).join('');
 }
 
 /* ============================================================
